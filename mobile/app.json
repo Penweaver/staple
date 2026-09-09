@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "staple",
+    "slug": "staple",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F9FAFB"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.staple.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "staple uses your location to discover ongoing Group Buys in your neighborhood."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#22C55E"
+      },
+      "package": "com.staple.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "staple"
+  }
+}
