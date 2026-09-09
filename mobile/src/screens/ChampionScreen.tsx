@@ -3,16 +3,28 @@ import { View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import { theme } from '../theme/tokens.js';
 import { Typography, Card, Badge, Button } from '../components/index.js';
 import { BUSINESS_RULES, ChampionStatus } from '@staple/shared';
+import { useSystemConfig } from '../services/config.js';
 
-export const ChampionScreen: React.FC<{
+export interface ChampionScreenProps {
   championStatus?: ChampionStatus;
   activeGroupBuysCount?: number;
+  milestoneRewardAmount?: number; // Optional override; defaults to dynamic system_config
   onCreateGroupBuy?: () => void;
-}> = ({
+}
+
+export const ChampionScreen: React.FC<ChampionScreenProps> = ({
   championStatus = ChampionStatus.ACTIVE,
   activeGroupBuysCount = 1,
+  milestoneRewardAmount,
   onCreateGroupBuy,
 }) => {
+  // Dynamically query champion_milestone_reward_amount from system_config (Addendum A3)
+  const { value: dynamicReward } = useSystemConfig<number>(
+    'champion_milestone_reward_amount',
+    BUSINESS_RULES.CHAMPION_MILESTONE_REWARD_AMOUNT
+  );
+  const rewardAmount = milestoneRewardAmount ?? dynamicReward;
+
   const maxActive = BUSINESS_RULES.MAX_CHAMPION_ACTIVE_GROUP_BUYS;
   const canCreate = championStatus === ChampionStatus.ACTIVE && activeGroupBuysCount < maxActive;
 
@@ -78,10 +90,10 @@ export const ChampionScreen: React.FC<{
 
           <View style={styles.ruleItem}>
             <Typography variant="bodySm" weight="bold">
-              3. Milestone Reward (₦{BUSINESS_RULES.CHAMPION_MILESTONE_REWARD_AMOUNT.toLocaleString()})
+              3. Milestone Reward (₦{rewardAmount.toLocaleString()})
             </Typography>
             <Typography variant="caption" color={theme.textSecondary}>
-              When your Group Buy reaches 100% of target, you receive a flat ₦{BUSINESS_RULES.CHAMPION_MILESTONE_REWARD_AMOUNT.toLocaleString()} reward credited directly to your STAPLE Wallet.
+              When your Group Buy reaches 100% of target, you receive a flat ₦{rewardAmount.toLocaleString()} reward credited directly to your STAPLE Wallet.
             </Typography>
           </View>
         </Card>
