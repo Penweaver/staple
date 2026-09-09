@@ -2,19 +2,19 @@
   "name": "@staple/shared",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./tokens": {
       "types": "./dist/constants/designTokens.d.ts",
-      "import": "./dist/constants/designTokens.mjs",
-      "require": "./dist/constants/designTokens.js"
+      "import": "./dist/constants/designTokens.js",
+      "default": "./dist/constants/designTokens.js"
     }
   },
   "scripts": {

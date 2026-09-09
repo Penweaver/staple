@@ -6,11 +6,12 @@
   "workspaces": [
     "shared",
     "mobile",
-    "admin"
+    "admin",
+    "tests"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
-    "test:unit": "npm run test:unit --workspaces --if-present",
+    "test:unit": "npm run test --workspace=@staple/tests",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
