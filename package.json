@@ -1,0 +1,26 @@
+{
+  "name": "staple-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "STAPLE LIMITED — Location-aware collective purchasing platform",
+  "workspaces": [
+    "shared",
+    "mobile",
+    "admin"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "test:unit": "npm run test:unit --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "keywords": [
+    "staple",
+    "group-buy",
+    "collective-purchasing",
+    "nigeria",
+    "mobile-first"
+  ],
+  "author": "STAPLE LIMITED",
+  "license": "UNLICENSED"
+}
