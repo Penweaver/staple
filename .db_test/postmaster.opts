@@ -1,1 +1,1 @@
-C:/Program Files/PostgreSQL/18/bin/postgres.exe "-D" "c:\Projects\STAPLE\.db_test" "-p" "54332"
+C:/Program Files/PostgreSQL/18/bin/postgres.exe "-D" "c:/Projects/STAPLE/.db_test" "-p" "54332"

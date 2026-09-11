@@ -3,3 +3,10 @@
 2026-09-10 00:28:01.642 WAT [16388] LOG:  listening on IPv4 address "127.0.0.1", port 54332
 2026-09-10 00:28:01.771 WAT [7192] LOG:  database system was shut down at 2026-09-10 00:27:43 WAT
 2026-09-10 00:28:01.783 WAT [16388] LOG:  database system is ready to accept connections
+2026-09-11 13:09:12.532 WAT [22612] LOG:  starting PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit
+2026-09-11 13:09:12.541 WAT [22612] LOG:  listening on IPv6 address "::1", port 54332
+2026-09-11 13:09:12.541 WAT [22612] LOG:  listening on IPv4 address "127.0.0.1", port 54332
+2026-09-11 13:09:12.713 WAT [7872] LOG:  database system was interrupted; last known up at 2026-09-10 00:35:44 WAT
+2026-09-11 13:09:22.072 WAT [7872] LOG:  could not open file "./server.log": sharing violation
+2026-09-11 13:09:22.072 WAT [7872] DETAIL:  Continuing to retry for 30 seconds.
+2026-09-11 13:09:22.072 WAT [7872] HINT:  You might have antivirus, backup, or similar software interfering with the database system.
