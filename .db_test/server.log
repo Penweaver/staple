@@ -10,3 +10,11 @@
 2026-09-11 13:09:22.072 WAT [7872] LOG:  could not open file "./server.log": sharing violation
 2026-09-11 13:09:22.072 WAT [7872] DETAIL:  Continuing to retry for 30 seconds.
 2026-09-11 13:09:22.072 WAT [7872] HINT:  You might have antivirus, backup, or similar software interfering with the database system.
+2026-09-11 13:09:49.176 WAT [7872] LOG:  syncing data directory (fsync), elapsed time: 36.46 s, current path: .
+2026-09-11 13:09:49.186 WAT [7872] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-09-11 13:09:49.197 WAT [7872] LOG:  redo starts at 0/1C9F8E0
+2026-09-11 13:09:49.197 WAT [7872] LOG:  invalid record length at 0/1C9FA20: expected at least 24, got 0
+2026-09-11 13:09:49.197 WAT [7872] LOG:  redo done at 0/1C9F9E8 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-09-11 13:09:49.210 WAT [24028] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-09-11 13:09:49.246 WAT [24028] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.006 s, total=0.040 s; sync files=2, longest=0.004 s, average=0.003 s; distance=0 kB, estimate=0 kB; lsn=0/1C9FA20, redo lsn=0/1C9FA20
+2026-09-11 13:09:49.269 WAT [22612] LOG:  database system is ready to accept connections
