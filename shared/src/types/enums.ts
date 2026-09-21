@@ -17,6 +17,12 @@ export enum ChampionStatus {
   SUSPENDED = 'suspended',
 }
 
+export enum ChampionApplicationStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
 // Group Buying
 export enum GroupBuyType {
   REGULAR = 'regular',
