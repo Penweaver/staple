@@ -14,7 +14,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Card,
@@ -22,7 +22,7 @@ import {
   Button,
   Header,
   EmptyState,
-} from '../components/index.js';
+} from '../components/index';
 import { TicketStatus } from '@staple/shared';
 
 export interface SupportTicketItem {

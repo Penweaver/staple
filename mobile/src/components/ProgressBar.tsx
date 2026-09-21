@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 
 export interface ProgressBarProps {
   paidQuantity: number;

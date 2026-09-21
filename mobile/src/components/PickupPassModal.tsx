@@ -13,8 +13,8 @@ import {
   Linking,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Typography, Card, Badge, Button } from './index.js';
+import { theme } from '../theme/tokens';
+import { Typography, Card, Badge, Button } from './index';
 import { formatNaira } from '@staple/shared';
 
 export interface PickupPassData {

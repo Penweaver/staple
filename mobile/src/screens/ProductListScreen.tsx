@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Button,
@@ -20,9 +20,9 @@ import {
   Badge,
   Input,
   Header,
-} from '../components/index.js';
+} from '../components/index';
 import { formatNaira } from '@staple/shared';
-import { useLocation } from '../services/location.js';
+import { useLocation } from '../services/location';
 
 export interface ProductItem {
   id: string;

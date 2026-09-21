@@ -11,14 +11,14 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Button,
   Card,
   Badge,
   Header,
-} from '../components/index.js';
+} from '../components/index';
 import { formatNaira } from '@staple/shared';
 
 export interface BasketItemData {

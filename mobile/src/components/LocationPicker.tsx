@@ -12,10 +12,10 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Button } from './Button.js';
-import { Badge } from './Badge.js';
-import { Typography } from './Typography.js';
+import { theme } from '../theme/tokens';
+import { Button } from './Button';
+import { Badge } from './Badge';
+import { Typography } from './Typography';
 
 // Pre-seeded hierarchy for Nigeria
 const NIGERIA_LOCATIONS = [

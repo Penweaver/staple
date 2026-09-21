@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Button } from './Button.js';
+import { theme } from '../theme/tokens';
+import { Button } from './Button';
 
 export interface EmptyStateProps {
   title: string;

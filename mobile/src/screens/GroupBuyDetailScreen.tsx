@@ -10,7 +10,7 @@ import {
   Image,
   Text,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Price,
@@ -18,9 +18,9 @@ import {
   Badge,
   ProgressBar,
   Button,
-} from '../components/index.js';
+} from '../components/index';
 import { GroupBuyStatus, BUSINESS_RULES } from '@staple/shared';
-import { shareGroupBuy, shareToWhatsApp } from '../services/share.js';
+import { shareGroupBuy, shareToWhatsApp } from '../services/share';
 
 export const GroupBuyDetailScreen: React.FC<{
   groupBuyId?: string;

@@ -12,13 +12,13 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Button,
   Card,
   Badge,
-} from '../components/index.js';
+} from '../components/index';
 import { formatNaira } from '@staple/shared';
 
 export interface OrderConfirmationScreenProps {

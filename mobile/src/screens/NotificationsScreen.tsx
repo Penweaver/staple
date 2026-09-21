@@ -11,8 +11,8 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Typography, Card, Button, Header, EmptyState } from '../components/index.js';
+import { theme } from '../theme/tokens';
+import { Typography, Card, Button, Header, EmptyState } from '../components/index';
 import { NotificationType } from '@staple/shared';
 
 export interface NotificationItem {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Typography, Price, Card } from '../components/index.js';
+import { theme } from '../theme/tokens';
+import { Typography, Price, Card } from '../components/index';
 import { WalletEntrySide, WalletTransactionType } from '@staple/shared';
 
 export const WalletScreen: React.FC = () => {

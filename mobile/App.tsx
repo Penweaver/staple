@@ -7,7 +7,7 @@ import {
   StyleSheet,
   StatusBar,
 } from 'react-native';
-import { theme } from './src/theme/tokens.js';
+import { theme } from './src/theme/tokens';
 import {
   HomeScreen,
   GroupBuyDetailScreen,
@@ -22,7 +22,7 @@ import {
   ProductDetailScreen,
   BasketListScreen,
   BasketDetailScreen,
-} from './src/screens/index.js';
+} from './src/screens/index';
 
 type ActiveTab = 'discover' | 'catalogue' | 'orders' | 'wallet' | 'champion';
 

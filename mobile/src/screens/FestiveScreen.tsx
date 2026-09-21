@@ -14,7 +14,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Card,
@@ -23,7 +23,7 @@ import {
   Button,
   Header,
   EmptyState,
-} from '../components/index.js';
+} from '../components/index';
 import {
   formatNaira,
   validateOwambeDeliveryDate,
@@ -35,7 +35,7 @@ import {
 import {
   InstalmentPaymentModal,
   InstalmentPaymentItem,
-} from './InstalmentPaymentModal.js';
+} from './InstalmentPaymentModal';
 
 interface FestiveSeasonItem {
   id: string;

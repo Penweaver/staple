@@ -14,8 +14,8 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Typography, Button, Input, Card, Badge } from './index.js';
+import { theme } from '../theme/tokens';
+import { Typography, Button, Input, Card, Badge } from './index';
 import {
   ChampionApplicationInput,
   validateChampionApplication,

@@ -11,16 +11,16 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Button,
   Card,
   Badge,
   Header,
-} from '../components/index.js';
+} from '../components/index';
 import { formatNaira } from '@staple/shared';
-import { SEED_BASKETS, BasketItemData } from './BasketListScreen.js';
+import { SEED_BASKETS, BasketItemData } from './BasketListScreen';
 
 export interface BasketDetailScreenProps {
   basketId: string;

@@ -12,8 +12,8 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Typography, Card, Button } from '../components/index.js';
+import { theme } from '../theme/tokens';
+import { Typography, Card, Button } from '../components/index';
 import { formatNaira } from '@staple/shared';
 
 export interface InstalmentPaymentItem {

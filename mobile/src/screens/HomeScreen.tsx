@@ -6,7 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Price,
@@ -15,7 +15,7 @@ import {
   ProgressBar,
   Header,
   EmptyState,
-} from '../components/index.js';
+} from '../components/index';
 import { GroupBuyStatus } from '@staple/shared';
 
 export interface GroupBuyItem {

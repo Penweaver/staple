@@ -14,8 +14,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
-import { Typography, Card, Button, Header } from '../components/index.js';
+import { theme } from '../theme/tokens';
+import { Typography, Card, Button, Header } from '../components/index';
 
 export interface ChatMessageItem {
   id: string;

@@ -11,16 +11,16 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Button,
   Card,
   Badge,
   Header,
-} from '../components/index.js';
-import { LocationPicker, SelectedLocationData } from '../components/LocationPicker.js';
-import { useLocation, detectLocation } from '../services/location.js';
+} from '../components/index';
+import { LocationPicker, SelectedLocationData } from '../components/LocationPicker';
+import { useLocation, detectLocation } from '../services/location';
 import { formatOperatingHours } from '@staple/shared';
 
 export interface LocationSelectScreenProps {

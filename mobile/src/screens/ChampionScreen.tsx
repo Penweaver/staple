@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Card,
@@ -15,7 +15,7 @@ import {
   Button,
   ProgressBar,
   ChampionApplicationModal,
-} from '../components/index.js';
+} from '../components/index';
 import {
   BUSINESS_RULES,
   ChampionStatus,
@@ -25,7 +25,7 @@ import {
   generateChampionBroadcastMessage,
   ChampionApplicationInput,
 } from '@staple/shared';
-import { useSystemConfig } from '../services/config.js';
+import { useSystemConfig } from '../services/config';
 
 export interface ChampionScreenProps {
   championStatus?: ChampionStatus;

@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Price,
@@ -15,7 +15,7 @@ import {
   Button,
   PickupPassModal,
   PickupPassData,
-} from '../components/index.js';
+} from '../components/index';
 import { OrderStatus, formatPickupCode } from '@staple/shared';
 
 interface OrderItemModel {

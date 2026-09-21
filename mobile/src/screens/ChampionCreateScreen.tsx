@@ -12,16 +12,16 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { theme } from '../theme/tokens.js';
+import { theme } from '../theme/tokens';
 import {
   Typography,
   Button,
   Card,
   Badge,
   Header,
-} from '../components/index.js';
+} from '../components/index';
 import { formatNaira, BUSINESS_RULES } from '@staple/shared';
-import { SEED_PRODUCTS, ProductItem } from './ProductListScreen.js';
+import { SEED_PRODUCTS, ProductItem } from './ProductListScreen';
 
 export interface ChampionCreateScreenProps {
   onBack: () => void;
