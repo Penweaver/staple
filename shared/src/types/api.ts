@@ -525,6 +525,76 @@ export interface DispatchGroupBuyResponse {
 }
 
 // ──────────────────────────────────────────────
+// Phase 9: Hardening, Cron & Finance API Types
+// ──────────────────────────────────────────────
+
+export interface WalletReconciliationResult {
+  totalWallets: number;
+  balancedWallets: number;
+  discrepantWallets: number;
+  totalSystemLiability: number;
+  discrepantWalletIds: string[];
+  isClean: boolean;
+  reconciledAt: string;
+}
+
+export interface ExpiredGroupBuysResult {
+  processedCount: number;
+  fulfilledCount: number;
+  closedCount: number;
+  totalRefundedNaira: number;
+  executedAt: string;
+}
+
+export interface TierRebatesResult {
+  ordersCredited: number;
+  totalDisbursedNaira: number;
+  executedAt: string;
+}
+
+export interface FestiveOverdueResult {
+  scannedCount: number;
+  markedOverdueCount: number;
+  defaultCancelledCount: number;
+  executedAt: string;
+}
+
+export interface CronRunAllResponse {
+  timestamp: string;
+  reconciliation: WalletReconciliationResult;
+  expiries: ExpiredGroupBuysResult;
+  tierRebates: TierRebatesResult;
+  festiveOverdue: FestiveOverdueResult;
+}
+
+export interface FinanceOverviewResponse {
+  totalSystemLiability: number;
+  activeWalletsCount: number;
+  totalTransactionsCount: number;
+  reconciliationStatus: {
+    lastReconciledAt: string | null;
+    isClean: boolean;
+    discrepantCount: number;
+  };
+  recentTransactions: Array<{
+    id: string;
+    walletId: string;
+    userName: string;
+    userEmail: string;
+    amount: number;
+    entrySide: 'credit' | 'debit';
+    transactionType: string;
+    description: string;
+    createdAt: string;
+  }>;
+}
+
+export interface UpdateSystemConfigRequest {
+  key: string;
+  value: string;
+}
+
+// ──────────────────────────────────────────────
 // Common API Types
 // ──────────────────────────────────────────────
 
@@ -538,3 +608,4 @@ export interface PaginationParams {
   page?: number;
   limit?: number;
 }
+
