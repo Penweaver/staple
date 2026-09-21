@@ -6,6 +6,7 @@
 import {
   UserRole,
   ChampionStatus,
+  ChampionApplicationStatus,
   GroupBuyType,
   GroupBuyStatus,
   GroupBuyCreatorType,
