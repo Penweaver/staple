@@ -3,15 +3,6 @@
 -- User profiles with Champion status, location link, and participation tracker
 -- ============================================================================
 
--- Ensure auth schema exists (for standalone test environments)
-CREATE SCHEMA IF NOT EXISTS auth;
-CREATE TABLE IF NOT EXISTS auth.users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255),
-  phone VARCHAR(50),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   phone VARCHAR(20) UNIQUE,

@@ -24,6 +24,8 @@ web-build/
 
 # Supabase
 .supabase/
+supabase/.branches/
+supabase/.temp/
 .env.local
 .env.*.local
 
