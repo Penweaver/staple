@@ -15,9 +15,25 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// 3. Resolve TypeScript ESM imports ending in .js to .ts/.tsx
+// 3. Force singleton React and React-DOM from mobile to prevent duplicate React instances
+config.resolver.extraNodeModules = {
+  react: path.resolve(projectRoot, 'node_modules/react'),
+  'react-dom': path.resolve(projectRoot, 'node_modules/react-dom'),
+  'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
+};
+
+// 4. Custom resolver guaranteeing identical React 18.2.0 singleton across all files
 const defaultResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (moduleName === 'react' || moduleName.startsWith('react/')) {
+    const sub = moduleName === 'react' ? 'index.js' : moduleName.slice('react/'.length);
+    return context.resolveRequest(context, path.resolve(projectRoot, 'node_modules/react', sub), platform);
+  }
+  if (moduleName === 'react-dom' || moduleName.startsWith('react-dom/')) {
+    const sub = moduleName === 'react-dom' ? 'index.js' : moduleName.slice('react-dom/'.length);
+    return context.resolveRequest(context, path.resolve(projectRoot, 'node_modules/react-dom', sub), platform);
+  }
+
   if (moduleName.startsWith('.') && moduleName.endsWith('.js')) {
     const nameWithoutJs = moduleName.slice(0, -3);
     try {

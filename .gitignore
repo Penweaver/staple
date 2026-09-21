@@ -47,3 +47,6 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Debugging
+.edge-debug/
