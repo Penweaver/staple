@@ -80,7 +80,7 @@ export default function AdminPaymentsPage() {
 
         {/* Anti-Gaming Highlight Banner */}
         <div style={styles.alertBanner}>
-          <Text style={{ fontSize: 24, marginRight: 12 }}>🛡️</Text>
+          <span style={{ fontSize: 24, marginRight: 12 }}>🛡️</span>
           <div style={{ flex: 1 }}>
             <div style={{ fontWeight: 700, color: '#92400E', fontSize: '14px' }}>
               Anti-Gaming Fingerprint Detection Active (Founder Addendum A4)
