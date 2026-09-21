@@ -8,3 +8,4 @@ export * from './utils/location.js';
 export * from './utils/share.js';
 export * from './utils/payment.js';
 export * from './utils/champion.js';
+export * from './utils/fulfilment.js';
