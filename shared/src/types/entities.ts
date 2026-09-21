@@ -49,6 +49,38 @@ export interface Profile {
   updated_at: string;
 }
 
+export interface ChampionApplication {
+  id: string;
+  user_id: string;
+  full_name: string;
+  phone: string;
+  state: string;
+  lga: string;
+  neighborhood: string;
+  service_area_id: string | null;
+  estimated_network_size: number;
+  motivation: string;
+  experience: string | null;
+  status: ChampionApplicationStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  rejection_reason: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChampionMetrics {
+  userId: string;
+  championStatus: ChampionStatus;
+  activeGroupBuysCount: number;
+  maxActiveGroupBuys: number;
+  totalGroupBuysOrganized: number;
+  successfulGroupBuysCount: number;
+  totalGmvNaira: number;
+  milestoneRewardsEarnedNaira: number;
+  communityMembersReached: number;
+}
+
 // --- Location Hierarchy ---
 export interface Country {
   id: string;
