@@ -6,6 +6,9 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  Modal,
+  Image,
+  Text,
 } from 'react-native';
 import { theme } from '../theme/tokens.js';
 import {
@@ -17,6 +20,7 @@ import {
   Button,
 } from '../components/index.js';
 import { GroupBuyStatus, BUSINESS_RULES } from '@staple/shared';
+import { shareGroupBuy, shareToWhatsApp } from '../services/share.js';
 
 export const GroupBuyDetailScreen: React.FC<{
   groupBuyId?: string;
@@ -24,10 +28,12 @@ export const GroupBuyDetailScreen: React.FC<{
   onProceedToCheckout?: (quantity: number) => void;
 }> = ({ onBack, onProceedToCheckout }) => {
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [showQrModal, setShowQrModal] = useState<boolean>(false);
 
   // Mock group buy model matching schema
   const groupBuy = {
     id: 'gb-1',
+    slug: 'mama-gold-rice-lekki',
     title: 'Mama Gold Premium Parboiled Rice (50kg)',
     description:
       'Stone-free, high-grade long grain parboiled Nigerian rice. Sourced in bulk directly from millers in Kebbi to unlock direct wholesale savings.',
@@ -40,7 +46,9 @@ export const GroupBuyDetailScreen: React.FC<{
     status: GroupBuyStatus.LIVE,
     daysRemaining: 9,
     areaName: 'Lekki Phase 1',
+    hubName: 'staple Hub — Lekki Admiralty',
     collectionPoint: 'staple Hub — Lekki Admiralty (42 Admiralty Way)',
+    championName: 'Dele A.',
     tiers: [
       { minPct: 0, maxPct: 49, discount: '0%', price: 85000, active: false },
       { minPct: 50, maxPct: 74, discount: '2.5%', price: 82875, active: true },
@@ -65,7 +73,40 @@ export const GroupBuyDetailScreen: React.FC<{
     }
   };
 
+  const handleShareWhatsApp = () => {
+    shareToWhatsApp({
+      slug: groupBuy.slug,
+      itemTitle: groupBuy.title,
+      unit: groupBuy.unit,
+      areaName: groupBuy.areaName,
+      currentPrice: groupBuy.unitPrice,
+      originalPrice: groupBuy.originalPrice,
+      paidQuantity: groupBuy.paidQuantity,
+      targetQuantity: groupBuy.targetQuantity,
+      hubName: groupBuy.hubName,
+      championName: groupBuy.championName,
+    });
+  };
+
+  const handleNativeShare = () => {
+    shareGroupBuy({
+      slug: groupBuy.slug,
+      itemTitle: groupBuy.title,
+      unit: groupBuy.unit,
+      areaName: groupBuy.areaName,
+      currentPrice: groupBuy.unitPrice,
+      originalPrice: groupBuy.originalPrice,
+      paidQuantity: groupBuy.paidQuantity,
+      targetQuantity: groupBuy.targetQuantity,
+      hubName: groupBuy.hubName,
+      championName: groupBuy.championName,
+    });
+  };
+
   const subtotal = groupBuy.unitPrice * selectedQuantity;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+    `https://staple.ng/gb/${groupBuy.slug}`
+  )}`;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,7 +117,12 @@ export const GroupBuyDetailScreen: React.FC<{
             ← Back
           </Typography>
         </TouchableOpacity>
-        <Badge status={groupBuy.status} />
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => setShowQrModal(true)} style={styles.iconBtn}>
+            <Text style={{ fontSize: 16 }}>📱 QR</Text>
+          </TouchableOpacity>
+          <Badge status={groupBuy.status} />
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -121,6 +167,39 @@ export const GroupBuyDetailScreen: React.FC<{
             minFulfilmentQuantity={groupBuy.minFulfilmentQuantity}
             unit={groupBuy.unit}
           />
+        </Card>
+
+        {/* Viral Social Sharing Action Box */}
+        <Card style={styles.shareCard}>
+          <View style={styles.shareHeader}>
+            <Text style={{ fontSize: 24, marginRight: 10 }}>📣</Text>
+            <View style={{ flex: 1 }}>
+              <Typography variant="h3" color={theme.colors.primary[900]}>
+                Invite Your Neighbors!
+              </Typography>
+              <Typography variant="caption" color={theme.colors.primary[800]}>
+                More buyers = lower price for everyone in {groupBuy.areaName}
+              </Typography>
+            </View>
+          </View>
+
+          <View style={styles.shareBtnsRow}>
+            <TouchableOpacity
+              style={styles.whatsAppBtn}
+              onPress={handleShareWhatsApp}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.whatsAppBtnText}>💬 Share on WhatsApp</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.genericShareBtn}
+              onPress={handleNativeShare}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.genericShareBtnText}>🔗 Copy Link</Text>
+            </TouchableOpacity>
+          </View>
         </Card>
 
         {/* Dynamic Pricing Tiers Table (§20) */}
@@ -211,6 +290,38 @@ export const GroupBuyDetailScreen: React.FC<{
           />
         </View>
       </View>
+
+      {/* QR Code Modal */}
+      <Modal visible={showQrModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Typography variant="h3" style={{ textAlign: 'center', marginBottom: 6 }}>
+              Scan to Join Group Buy
+            </Typography>
+            <Typography variant="caption" color={theme.textSecondary} style={{ textAlign: 'center', marginBottom: 16 }}>
+              Point phone camera to open deal link on staple.ng
+            </Typography>
+
+            <View style={styles.qrBox}>
+              <Image
+                source={{ uri: qrUrl }}
+                style={{ width: 220, height: 220 }}
+                resizeMode="contain"
+              />
+            </View>
+
+            <Text style={styles.qrSlug}>https://staple.ng/gb/{groupBuy.slug}</Text>
+
+            <Button
+              title="Close"
+              variant="outline"
+              size="md"
+              onPress={() => setShowQrModal(false)}
+              style={{ marginTop: 16 }}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -233,6 +344,14 @@ const styles = StyleSheet.create({
   backButton: {
     paddingVertical: theme.spacing[1],
   },
+  iconBtn: {
+    backgroundColor: theme.colors.surface.subtle,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: theme.borderSubtle,
+  },
   content: {
     padding: theme.spacing[4],
     paddingBottom: 120,
@@ -247,14 +366,18 @@ const styles = StyleSheet.create({
   sectionCard: {
     marginBottom: theme.spacing[4],
   },
+  cardHeader: {
+    marginBottom: theme.spacing[2],
+  },
+  tierExplanation: {
+    marginBottom: theme.spacing[3],
+    lineHeight: theme.typography.lineHeight.sm,
+  },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing[2],
-  },
-  strikethrough: {
-    textDecorationLine: 'line-through',
+    marginBottom: theme.spacing[3],
   },
   savingsBadge: {
     backgroundColor: theme.colors.success.light,
@@ -262,12 +385,53 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing[1],
     borderRadius: theme.borderRadius.full,
   },
-  cardHeader: {
-    marginBottom: theme.spacing[2],
+  strikethrough: {
+    textDecorationLine: 'line-through',
+    marginTop: 2,
   },
-  tierExplanation: {
-    marginBottom: theme.spacing[3],
-    lineHeight: theme.typography.lineHeight.sm,
+  shareCard: {
+    padding: 16,
+    backgroundColor: theme.colors.primary[50],
+    borderColor: theme.colors.primary[200],
+    borderWidth: 1,
+    marginBottom: theme.spacing[4],
+  },
+  shareHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  shareBtnsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  whatsAppBtn: {
+    flex: 2,
+    backgroundColor: '#25D366',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  whatsAppBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  genericShareBtn: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: theme.borderDefault,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  genericShareBtnText: {
+    color: theme.textPrimary,
+    fontWeight: '600',
+    fontSize: 13,
   },
   tiersList: {
     gap: theme.spacing[2],
@@ -278,17 +442,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: theme.spacing[3],
     borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.surface.background,
+    backgroundColor: theme.colors.surface.subtle,
     borderWidth: 1,
     borderColor: theme.borderSubtle,
   },
   tierRowActive: {
-    backgroundColor: theme.colors.primary[50],
     borderColor: theme.brandGreen,
+    backgroundColor: theme.colors.primary[50],
   },
   collectionNote: {
-    marginTop: theme.spacing[1],
-    color: theme.textSecondary,
+    marginTop: theme.spacing[2],
+    lineHeight: theme.typography.lineHeight.sm,
   },
   bottomBar: {
     position: 'absolute',
@@ -296,11 +460,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: theme.colors.surface.card,
-    paddingHorizontal: theme.spacing[4],
-    paddingTop: theme.spacing[3],
-    paddingBottom: theme.spacing[6],
     borderTopWidth: 1,
     borderTopColor: theme.borderSubtle,
+    padding: theme.spacing[4],
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing[3],
@@ -308,13 +470,13 @@ const styles = StyleSheet.create({
   quantityPicker: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.neutral[100],
+    backgroundColor: theme.colors.surface.subtle,
     borderRadius: theme.borderRadius.lg,
     padding: theme.spacing[1],
   },
   qtyButton: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.colors.surface.card,
@@ -329,5 +491,33 @@ const styles = StyleSheet.create({
   },
   actionContainer: {
     flex: 1,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: theme.cardBg,
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 320,
+    alignItems: 'center',
+  },
+  qrBox: {
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.borderSubtle,
+    marginBottom: 12,
+  },
+  qrSlug: {
+    fontSize: 11,
+    color: theme.brandGreen,
+    fontWeight: '600',
   },
 });

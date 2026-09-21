@@ -12,6 +12,7 @@ import {
   HomeScreen,
   GroupBuyDetailScreen,
   ChampionScreen,
+  ChampionCreateScreen,
   WalletScreen,
   OrdersScreen,
   LocationSelectScreen,
@@ -30,9 +31,23 @@ export default function App() {
   const [activeBasketId, setActiveBasketId] = useState<string | null>(null);
   const [showBasketsList, setShowBasketsList] = useState<boolean>(false);
   const [showLocationSelect, setShowLocationSelect] = useState<boolean>(false);
+  const [showChampionWizard, setShowChampionWizard] = useState<boolean>(false);
 
   const renderContent = () => {
-    // 1. Location Selection Modal/Screen
+    // 1. Champion 6-Step Creation Wizard
+    if (showChampionWizard) {
+      return (
+        <ChampionCreateScreen
+          onBack={() => setShowChampionWizard(false)}
+          onSuccess={(slug) => {
+            setShowChampionWizard(false);
+            setActiveGroupBuyId('gb-1');
+          }}
+        />
+      );
+    }
+
+    // 2. Location Selection Modal/Screen
     if (showLocationSelect) {
       return (
         <LocationSelectScreen
@@ -42,7 +57,7 @@ export default function App() {
       );
     }
 
-    // 2. Product Detail Screen
+    // 3. Product Detail Screen
     if (activeProductId) {
       return (
         <ProductDetailScreen
@@ -50,7 +65,7 @@ export default function App() {
           onBack={() => setActiveProductId(null)}
           onStartGroupBuy={() => {
             setActiveProductId(null);
-            setActiveTab('champion');
+            setShowChampionWizard(true);
           }}
           onViewLiveGroupBuys={() => {
             setActiveProductId(null);
@@ -60,7 +75,7 @@ export default function App() {
       );
     }
 
-    // 3. Basket Detail Screen
+    // 4. Basket Detail Screen
     if (activeBasketId) {
       return (
         <BasketDetailScreen
@@ -68,13 +83,13 @@ export default function App() {
           onBack={() => setActiveBasketId(null)}
           onStartBasketGroupBuy={() => {
             setActiveBasketId(null);
-            setActiveTab('champion');
+            setShowChampionWizard(true);
           }}
         />
       );
     }
 
-    // 4. Basket List Screen
+    // 5. Basket List Screen
     if (showBasketsList) {
       return (
         <BasketListScreen
@@ -84,7 +99,7 @@ export default function App() {
       );
     }
 
-    // 5. Group Buy Detail Screen
+    // 6. Group Buy Detail Screen
     if (activeGroupBuyId) {
       return (
         <GroupBuyDetailScreen
@@ -97,7 +112,7 @@ export default function App() {
       );
     }
 
-    // 6. Main Tabs
+    // 7. Main Tabs
     switch (activeTab) {
       case 'discover':
         return (
@@ -122,7 +137,7 @@ export default function App() {
         return (
           <ChampionScreen
             onCreateGroupBuy={() => {
-              alert('Opening Champion 6-Step Group Buy Creation Wizard (§9)');
+              setShowChampionWizard(true);
             }}
           />
         );
@@ -134,7 +149,8 @@ export default function App() {
     !!activeProductId ||
     !!activeBasketId ||
     showBasketsList ||
-    showLocationSelect;
+    showLocationSelect ||
+    showChampionWizard;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -143,7 +159,7 @@ export default function App() {
       {/* Main View Area */}
       <View style={styles.main}>{renderContent()}</View>
 
-      {/* Bottom Navigation Bar (Hidden when inside a detail screen) */}
+      {/* Bottom Navigation Bar (Hidden when inside a detail/wizard screen) */}
       {!isSubScreen && (
         <View style={styles.tabBar}>
           <TouchableOpacity
