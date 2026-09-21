@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
   perkItem: {
     backgroundColor: '#FFFFFF',
     padding: theme.spacing[3],
-    borderRadius: theme.radius.md,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: '#DCFCE7',
   },
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   buyItem: {
     backgroundColor: theme.colors.neutral[50],
     padding: theme.spacing[3],
-    borderRadius: theme.radius.md,
+    borderRadius: theme.borderRadius.md,
     marginTop: theme.spacing[2],
   },
   buyItemHeader: {
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   },
   dialectToggle: {
     flexDirection: 'row',
-    borderRadius: theme.radius.full,
+    borderRadius: theme.borderRadius.full,
     borderWidth: 1,
     borderColor: theme.colors.neutral[300],
     overflow: 'hidden',
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E2E8F0',
     padding: theme.spacing[3],
-    borderRadius: theme.radius.md,
+    borderRadius: theme.borderRadius.md,
     maxHeight: 160,
   },
   broadcastText: {
