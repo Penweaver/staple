@@ -97,10 +97,10 @@ export const InstalmentPaymentModal: React.FC<InstalmentPaymentModalProps> = ({
             {/* Overdue Alert Banner if applicable */}
             {instalment.isOverdue && (
               <View style={styles.overdueAlert}>
-                <Typography variant="caption" color={theme.colors.warning[900]} weight="bold">
+                <Typography variant="caption" color={theme.colors.warning.dark} weight="bold">
                   ⚠️ INSTALMENT OVERDUE
                 </Typography>
-                <Typography variant="caption" color={theme.colors.warning[800]}>
+                <Typography variant="caption" color={theme.colors.warning.dark}>
                   Grace period active: {instalment.daysRemainingInGrace ?? 0} days remaining before forfeiture cancellation (§35).
                 </Typography>
               </View>
@@ -246,9 +246,9 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing[3],
   },
   overdueAlert: {
-    backgroundColor: theme.colors.warning[50],
+    backgroundColor: theme.colors.warning.light,
     borderWidth: 1,
-    borderColor: theme.colors.warning[300],
+    borderColor: theme.colors.warning.main,
     padding: theme.spacing[3],
     borderRadius: theme.borderRadius.md,
     marginBottom: theme.spacing[3],

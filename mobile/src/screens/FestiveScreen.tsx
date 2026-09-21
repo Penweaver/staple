@@ -441,7 +441,7 @@ export const FestiveScreen: React.FC<{
                     weight="bold"
                     color={
                       owambeValidation.isValid
-                        ? theme.colors.success[900]
+                        ? theme.colors.success.dark
                         : theme.colors.error.main
                     }
                   >
@@ -576,7 +576,7 @@ export const FestiveScreen: React.FC<{
                 )}
               </View>
               <View style={styles.checkboxTextContainer}>
-                <Typography variant="caption" weight="bold" color={theme.colors.warning[900]}>
+                <Typography variant="caption" weight="bold" color={theme.colors.warning.dark}>
                   Non-Refundable Instalment Default Agreement (Spec §35)
                 </Typography>
                 <Typography variant="caption" color={theme.textSecondary}>
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.sm,
   },
   validationValid: {
-    backgroundColor: theme.colors.success[100],
+    backgroundColor: theme.colors.success.light,
   },
   validationInvalid: {
     backgroundColor: theme.colors.error.light,
@@ -885,11 +885,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: theme.spacing[3],
     alignItems: 'flex-start',
-    backgroundColor: theme.colors.warning[50],
+    backgroundColor: theme.colors.warning.light,
     padding: theme.spacing[3],
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme.colors.warning[200],
+    borderColor: theme.colors.warning.main,
     marginBottom: theme.spacing[4],
   },
   checkbox: {
@@ -897,13 +897,13 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 4,
     borderWidth: 2,
-    borderColor: theme.colors.warning[700],
+    borderColor: theme.colors.warning.dark,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
   },
   checkboxChecked: {
-    backgroundColor: theme.colors.warning[700],
+    backgroundColor: theme.colors.warning.dark,
   },
   checkboxTextContainer: {
     flex: 1,
