@@ -22,6 +22,7 @@ import {
   ProductDetailScreen,
   BasketListScreen,
   BasketDetailScreen,
+  SupportScreen,
 } from './src/screens/index';
 
 type ActiveTab = 'discover' | 'catalogue' | 'orders' | 'wallet' | 'champion';
@@ -34,6 +35,7 @@ export default function App() {
   const [showBasketsList, setShowBasketsList] = useState<boolean>(false);
   const [showLocationSelect, setShowLocationSelect] = useState<boolean>(false);
   const [showChampionWizard, setShowChampionWizard] = useState<boolean>(false);
+  const [showSupportChat, setShowSupportChat] = useState<boolean>(false);
 
   // Checkout flow state
   const [checkoutData, setCheckoutData] = useState<{
@@ -76,6 +78,15 @@ export default function App() {
       );
     }
 
+    // 1b. Support/Admin Chat (for proof of payment)
+    if (showSupportChat) {
+      return (
+        <SupportScreen
+          onBack={() => setShowSupportChat(false)}
+        />
+      );
+    }
+
     // 2. Checkout Screen
     if (checkoutData) {
       return (
@@ -86,6 +97,10 @@ export default function App() {
           quantity={checkoutData.quantity}
           collectionHub={checkoutData.collectionHub}
           onBack={() => setCheckoutData(null)}
+          onFundWallet={() => {
+            setCheckoutData(null);
+            setActiveTab('wallet');
+          }}
           onPaymentSuccess={(res) => {
             setConfirmedOrder({
               ...res,

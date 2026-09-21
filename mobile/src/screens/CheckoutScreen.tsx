@@ -1,6 +1,7 @@
 /**
  * STAPLE LIMITED — CheckoutScreen (Mobile)
- * Order checkout with split payment allocation (STAPLE Wallet + Paystack) (Spec §23)
+ * Wallet-only checkout for MVP manual payment flow.
+ * If wallet balance is insufficient, user is prompted to fund via bank transfer.
  */
 
 import React, { useState } from 'react';
@@ -9,8 +10,6 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
-  Switch,
   Alert,
 } from 'react-native';
 import { theme } from '../theme/tokens';
@@ -21,7 +20,7 @@ import {
   Badge,
   Header,
 } from '../components/index';
-import { formatNaira, calculateSplitPayment } from '@staple/shared';
+import { formatNaira } from '@staple/shared';
 
 export interface CheckoutScreenProps {
   itemTitle: string;
@@ -30,6 +29,7 @@ export interface CheckoutScreenProps {
   quantity: number;
   collectionHub: string;
   onBack: () => void;
+  onFundWallet?: () => void;
   onPaymentSuccess: (orderData: {
     orderNumber: string;
     pickupCode: string;
@@ -46,22 +46,34 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   quantity,
   collectionHub,
   onBack,
+  onFundWallet,
   onPaymentSuccess,
 }) => {
-  const [useWallet, setUseWallet] = useState<boolean>(true);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // Sample user wallet balance
   const walletBalance = 15000; // ₦15,000 available in wallet
   const totalAmount = unitPrice * quantity;
 
-  const split = calculateSplitPayment({
-    totalAmount,
-    walletBalance,
-    useWallet,
-  });
+  const hasEnoughBalance = walletBalance >= totalAmount;
+  const shortfall = totalAmount - walletBalance;
 
   const handleConfirmOrder = () => {
+    if (!hasEnoughBalance) {
+      Alert.alert(
+        'Insufficient Wallet Balance',
+        `You need ${formatNaira(shortfall)} more. Please fund your wallet via bank transfer first.`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Go to Wallet',
+            onPress: () => onFundWallet?.(),
+          },
+        ],
+      );
+      return;
+    }
+
     setIsProcessing(true);
 
     setTimeout(() => {
@@ -73,8 +85,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         orderNumber: randOrder,
         pickupCode: randCode,
         totalAmount,
-        walletUsed: split.walletAmount,
-        gatewayPaid: split.gatewayAmount,
+        walletUsed: totalAmount,
+        gatewayPaid: 0,
       });
     }, 1500);
   };
@@ -113,36 +125,55 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </View>
         </Card>
 
-        {/* Split Funding / Wallet Selector Card (§23) */}
-        <Card style={styles.walletCard}>
+        {/* Wallet Balance Card */}
+        <Card style={[styles.walletCard, !hasEnoughBalance && styles.walletCardInsufficient]}>
           <View style={styles.walletHeader}>
             <View style={{ flex: 1 }}>
               <Typography variant="label" color={theme.textPrimary}>
-                Apply STAPLE Wallet Balance
+                💳 STAPLE Wallet Balance
               </Typography>
-              <Typography variant="caption" color={theme.brandGreen} style={{ marginTop: 2 }}>
-                Available credit: {formatNaira(walletBalance)}
+              <Typography
+                variant="h3"
+                color={hasEnoughBalance ? theme.brandGreen : '#EF4444'}
+                style={{ marginTop: 4 }}
+              >
+                {formatNaira(walletBalance)}
               </Typography>
             </View>
 
-            <Switch
-              value={useWallet}
-              onValueChange={setUseWallet}
-              trackColor={{ false: theme.colors.neutral[300], true: theme.brandGreen }}
-            />
+            {hasEnoughBalance ? (
+              <Badge label="✓ Sufficient" variant="success" />
+            ) : (
+              <Badge label="Insufficient" variant="error" />
+            )}
           </View>
 
-          {useWallet && split.walletAmount > 0 && (
+          {hasEnoughBalance ? (
             <View style={styles.splitBreakdown}>
               <View style={styles.splitRow}>
                 <Text style={styles.splitLabel}>Wallet Deduction:</Text>
-                <Text style={styles.walletDeductValue}>- {formatNaira(split.walletAmount)}</Text>
+                <Text style={styles.walletDeductValue}>- {formatNaira(totalAmount)}</Text>
               </View>
-
               <View style={styles.splitRow}>
-                <Text style={styles.splitLabel}>Remaining Gateway Balance:</Text>
-                <Text style={styles.gatewayDueValue}>{formatNaira(split.gatewayAmount)}</Text>
+                <Text style={styles.splitLabel}>Remaining after purchase:</Text>
+                <Text style={styles.remainingValue}>{formatNaira(walletBalance - totalAmount)}</Text>
               </View>
+            </View>
+          ) : (
+            <View style={styles.insufficientBox}>
+              <Typography variant="bodySm" color="#991B1B" weight="bold">
+                You need {formatNaira(shortfall)} more to complete this order.
+              </Typography>
+              <Typography variant="caption" color="#6B7280" style={{ marginTop: 4 }}>
+                Transfer to the STAPLE bank account in your Wallet tab, send proof to Admin, and your balance will be credited.
+              </Typography>
+              <Button
+                title="🏦  Go to Wallet to Fund"
+                variant="outline"
+                size="md"
+                onPress={() => onFundWallet?.()}
+                style={{ marginTop: 12 }}
+              />
             </View>
           )}
         </Card>
@@ -173,13 +204,14 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           title={
             isProcessing
               ? 'Processing Payment...'
-              : split.isFullyFundedByWallet
+              : hasEnoughBalance
               ? `Confirm & Pay ${formatNaira(totalAmount)} from Wallet`
-              : `Pay with Paystack (${formatNaira(split.gatewayAmount)})`
+              : `Fund Wallet to Continue (${formatNaira(shortfall)} needed)`
           }
           variant="primary"
           size="lg"
           loading={isProcessing}
+          disabled={!hasEnoughBalance}
           onPress={handleConfirmOrder}
           style={{ marginTop: 12, marginBottom: 32 }}
         />
@@ -236,6 +268,10 @@ const styles = StyleSheet.create({
     borderColor: theme.brandGreen,
     borderWidth: 1,
   },
+  walletCardInsufficient: {
+    borderColor: '#FCA5A5',
+    backgroundColor: '#FEF2F2',
+  },
   walletHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -261,10 +297,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: theme.brandGreen,
   },
-  gatewayDueValue: {
+  remainingValue: {
     fontSize: 14,
     fontWeight: '800',
     color: theme.textPrimary,
+  },
+  insufficientBox: {
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#FCA5A5',
   },
   hubCard: {
     flexDirection: 'row',
