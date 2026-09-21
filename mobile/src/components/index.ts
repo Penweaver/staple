@@ -7,3 +7,4 @@ export * from './Input.js';
 export * from './EmptyState.js';
 export * from './Header.js';
 export * from './LocationPicker.js';
+export * from './ChampionApplicationModal.js';
