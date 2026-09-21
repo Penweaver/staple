@@ -1,2 +1,6 @@
-2026/09/21-18:05:02.947 1e5c Creating DB C:\Projects\STAPLE\.edge-debug\Default\EdgeCoupons/coupons_data.db since it was missing.
-2026/09/21-18:05:02.985 1e5c Reusing MANIFEST C:\Projects\STAPLE\.edge-debug\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/09/21-18:06:36.548 d70 Reusing MANIFEST C:\Projects\STAPLE\.edge-debug\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/09/21-18:06:36.552 d70 Recovering log #3
+2026/09/21-18:06:36.555 d70 Reusing old log C:\Projects\STAPLE\.edge-debug\Default\EdgeCoupons/coupons_data.db/000003.log 
+2026/09/21-18:06:36.984 2df8 Level-0 table #5: started
+2026/09/21-18:06:36.995 2df8 Level-0 table #5: 683273 bytes OK
+2026/09/21-18:06:37.004 2df8 Delete type=0 #3

@@ -1,2 +1,3 @@
-2026/09/21-18:04:59.649 6794 Creating DB C:\Projects\STAPLE\.edge-debug\Default\Site Characteristics Database since it was missing.
-2026/09/21-18:04:59.688 6794 Reusing MANIFEST C:\Projects\STAPLE\.edge-debug\Default\Site Characteristics Database/MANIFEST-000001
+2026/09/21-18:06:31.465 11b0 Reusing MANIFEST C:\Projects\STAPLE\.edge-debug\Default\Site Characteristics Database/MANIFEST-000001
+2026/09/21-18:06:31.466 11b0 Recovering log #3
+2026/09/21-18:06:31.470 11b0 Reusing old log C:\Projects\STAPLE\.edge-debug\Default\Site Characteristics Database/000003.log 
