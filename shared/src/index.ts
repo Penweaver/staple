@@ -5,3 +5,4 @@ export * from './constants/designTokens.js';
 export * from './constants/businessRules.js';
 export * from './utils/currency.js';
 export * from './utils/location.js';
+export * from './utils/share.js';

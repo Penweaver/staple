@@ -1,7 +1,13 @@
 /**
  * STAPLE LIMITED — API Request/Response Types
- * Type contracts for Supabase Edge Function endpoints (Phase 2: Catalogue & Location)
+ * Type contracts for Supabase Edge Function endpoints (Phase 2 & Phase 3)
  */
+
+import type {
+  GroupBuyStatus,
+  GroupBuyType,
+  GroupBuyCreatorType,
+} from './enums.js';
 
 import type {
   Country,
@@ -16,6 +22,9 @@ import type {
   ProductCategory,
   Basket,
   BasketItem,
+  GroupBuy,
+  GroupBuyPricingTier,
+  GroupBuyParticipant,
 } from './entities.js';
 
 // ──────────────────────────────────────────────
@@ -83,7 +92,7 @@ export interface SaveUserLocationResponse {
 export interface NearbyCollectionPointsRequest {
   latitude: number;
   longitude: number;
-  radius_km?: number; // Default: 15km (BUSINESS_RULES.DEFAULT_DISCOVERY_RADIUS_METERS / 1000)
+  radius_km?: number; // Default: 15km
 }
 
 export interface NearbyCollectionPointsResponse {
@@ -95,7 +104,7 @@ export interface NearbyCollectionPointsResponse {
 // Catalogue API Types
 // ──────────────────────────────────────────────
 
-/** GET /functions/v1/catalogue/products?category_id=&service_area_id=&search=&page=&limit= */
+/** GET /functions/v1/catalogue/products */
 export interface ProductListRequest {
   category_id?: string;
   service_area_id?: string;
@@ -137,7 +146,7 @@ export interface CategoryListResponse {
   categories: ProductCategory[];
 }
 
-/** GET /functions/v1/catalogue/baskets?service_area_id=&is_festive= */
+/** GET /functions/v1/catalogue/baskets */
 export interface BasketListRequest {
   service_area_id?: string;
   is_festive?: boolean;
@@ -169,6 +178,135 @@ export interface BasketDetailResponse {
 }
 
 // ──────────────────────────────────────────────
+// Phase 3: Group Buy API Types
+// ──────────────────────────────────────────────
+
+/** GET /functions/v1/group-buys/discover */
+export interface GroupBuyDiscoverRequest {
+  service_area_id?: string;
+  latitude?: number;
+  longitude?: number;
+  category_id?: string;
+  status?: GroupBuyStatus;
+  type?: GroupBuyType;
+  page?: number;
+  limit?: number;
+}
+
+export interface GroupBuyDiscoverItem {
+  id: string;
+  slug: string;
+  type: GroupBuyType;
+  creator_type: GroupBuyCreatorType;
+  champion_name: string | null;
+  title: string;
+  category_name: string;
+  image_url: string | null;
+  unit: string;
+  unit_price: number;
+  original_unit_price: number;
+  currency_code: string;
+  target_quantity: number;
+  paid_quantity: number;
+  min_fulfilment_quantity: number; // MVFQ (Addendum A1)
+  status: GroupBuyStatus;
+  days_remaining: number;
+  service_area_name: string;
+  collection_point_name: string | null;
+  progress_percentage: number;
+  current_tier: GroupBuyPricingTier | null;
+  participants_count: number;
+}
+
+export interface GroupBuyDiscoverResponse {
+  group_buys: GroupBuyDiscoverItem[];
+  total: number;
+  page: number;
+  limit: number;
+  has_more: boolean;
+}
+
+/** GET /functions/v1/group-buys/:id */
+export interface GroupBuyDetailResponse {
+  group_buy: GroupBuy & {
+    product?: ProductWithImages;
+    basket?: BasketWithItems;
+    pricing_tiers: GroupBuyPricingTier[];
+    participants_count: number;
+    champion_name: string | null;
+    service_area_name: string;
+    collection_point_name: string | null;
+    progress_percentage: number;
+    days_remaining: number;
+    current_tier: GroupBuyPricingTier | null;
+    next_tier: GroupBuyPricingTier | null;
+    user_participation?: {
+      quantity: number;
+      orders_count: number;
+      max_units_remaining: number;
+    };
+  };
+}
+
+/** POST /functions/v1/group-buys/create */
+export interface CreateGroupBuyRequest {
+  product_id?: string;
+  basket_id?: string;
+  service_area_id: string;
+  collection_point_id?: string;
+  target_quantity: number;
+  lifespan_days?: number; // Default 14
+  initial_purchase_quantity?: number; // Champion initial activation units (1-10)
+  description?: string;
+  share_message?: string;
+}
+
+export interface CreateGroupBuyResponse {
+  group_buy: GroupBuy;
+  pricing_tiers: GroupBuyPricingTier[];
+  activation_required: boolean;
+  activation_order_id?: string;
+  qr_code_url: string;
+  share_url: string;
+}
+
+/** POST /functions/v1/group-buys/:id/join */
+export interface JoinGroupBuyRequest {
+  quantity: number; // 1-10 units
+  collection_point_id?: string;
+  use_wallet?: boolean;
+}
+
+export interface JoinGroupBuyResponse {
+  order_id: string;
+  order_number: string;
+  unit_price: number;
+  total_amount: number;
+  wallet_amount: number;
+  gateway_amount: number;
+  requires_gateway_payment: boolean;
+  payment_reference?: string;
+  paystack_access_code?: string;
+}
+
+/** QR code & Social Sharing data contract */
+export interface GroupBuyShareData {
+  title: string;
+  product_name: string;
+  slug: string;
+  share_url: string;
+  qr_code_url: string;
+  area_name: string;
+  current_price: number;
+  original_price: number;
+  savings_percentage: number;
+  target_quantity: number;
+  paid_quantity: number;
+  whatsapp_message: string;
+  sms_message: string;
+}
+
+// ──────────────────────────────────────────────
 // Admin Catalogue API Types
 // ──────────────────────────────────────────────
 
@@ -176,7 +314,7 @@ export interface BasketDetailResponse {
 export interface CreateProductRequest {
   category_id: string;
   name: string;
-  slug?: string; // Auto-generated from name if omitted
+  slug?: string;
   description?: string;
   unit: string;
   weight_value?: number;
@@ -254,14 +392,12 @@ export interface CreateCollectionPointRequest {
 // Common API Types
 // ──────────────────────────────────────────────
 
-/** Standard error response from all Edge Functions */
 export interface ApiErrorResponse {
   error: string;
   message: string;
   status: number;
 }
 
-/** Standard paginated request parameters */
 export interface PaginationParams {
   page?: number;
   limit?: number;
