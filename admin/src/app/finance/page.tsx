@@ -268,7 +268,7 @@ export default function AdminFinancePage() {
           <div style={styles.metricCard}>
             <div style={styles.metricLabel}>Double-Entry Audit Status</div>
             <div style={{ ...styles.metricValue, color: '#0E9F6E' }}>CLEAN (0 Discrepancy)</div>
-            <div style={styles.metricSubtitle}>$\sum \text{Credits} - \sum \text{Debits} = \text{Balance}$ verified</div>
+            <div style={styles.metricSubtitle}>Σ(Credits) - Σ(Debits) = Balance verified</div>
           </div>
 
           <div style={styles.metricCard}>
