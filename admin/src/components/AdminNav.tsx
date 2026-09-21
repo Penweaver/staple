@@ -8,6 +8,8 @@ const navItems = [
   { label: 'Fulfilment', icon: '🚚', path: '/fulfilment' },
   { label: 'Products & Baskets', icon: '🌾', path: '/catalogue' },
   { label: 'Festive Plans', icon: '🎉', path: '/festive' },
+  { label: 'Support & Tickets', icon: '🎧', path: '/support' },
+  { label: 'Broadcast & Comms', icon: '📢', path: '/communications' },
   { label: 'Payments & Wallet', icon: '💳', path: '/finance' },
   { label: 'Locations & Hubs', icon: '📍', path: '/locations' },
   { label: 'Audit Logs', icon: '🛡️', path: '/audit-logs' },
