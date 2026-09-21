@@ -9,3 +9,4 @@ export * from './utils/share.js';
 export * from './utils/payment.js';
 export * from './utils/champion.js';
 export * from './utils/fulfilment.js';
+export * from './utils/festive.js';
