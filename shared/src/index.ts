@@ -10,3 +10,4 @@ export * from './utils/payment.js';
 export * from './utils/champion.js';
 export * from './utils/fulfilment.js';
 export * from './utils/festive.js';
+export * from './utils/communications.js';

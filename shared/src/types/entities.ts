@@ -521,3 +521,73 @@ export interface AuditLog {
   user_agent: string | null;
   created_at: string;
 }
+
+// --- Communications & Live Chat ---
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  channel: NotificationChannel;
+  title: string;
+  body: string;
+  data: Record<string, unknown>;
+  is_read: boolean;
+  read_at: string | null;
+  sent_at: string | null;
+  created_at: string;
+}
+
+export interface SupportTicket {
+  id: string;
+  ticket_number: string;
+  user_id: string;
+  subject: string;
+  description: string;
+  status: TicketStatus;
+  assigned_to: string | null;
+  resolved_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  user?: Profile;
+  assigned_profile?: Profile;
+}
+
+export interface TicketMessage {
+  id: string;
+  ticket_id: string;
+  sender_id: string;
+  sender_role: 'user' | 'champion' | 'admin' | 'system';
+  message: string;
+  attachments: string[];
+  created_at: string;
+  sender?: Profile;
+}
+
+export interface ChatRoom {
+  id: string;
+  name: string;
+  group_buy_id: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface ChatMembership {
+  id: string;
+  room_id: string;
+  user_id: string;
+  joined_at: string;
+  is_active: boolean;
+}
+
+export interface ChatMessage {
+  id: string;
+  room_id: string;
+  user_id: string;
+  content: string;
+  is_deleted: boolean;
+  created_at: string;
+  sender_name?: string;
+  sender_role?: string;
+  is_champion?: boolean;
+}
