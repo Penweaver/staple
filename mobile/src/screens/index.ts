@@ -13,3 +13,6 @@ export * from './BasketListScreen.js';
 export * from './BasketDetailScreen.js';
 export * from './FestiveScreen.js';
 export * from './InstalmentPaymentModal.js';
+export * from './ChatScreen.js';
+export * from './NotificationsScreen.js';
+export * from './SupportScreen.js';

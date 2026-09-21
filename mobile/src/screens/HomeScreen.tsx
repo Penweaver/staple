@@ -38,7 +38,15 @@ export const HomeScreen: React.FC<{
   onSelectGroupBuy?: (id: string) => void;
   onOpenChampion?: () => void;
   onOpenFestive?: () => void;
-}> = ({ onSelectGroupBuy, onOpenChampion, onOpenFestive }) => {
+  onOpenNotifications?: () => void;
+  onOpenSupport?: () => void;
+}> = ({
+  onSelectGroupBuy,
+  onOpenChampion,
+  onOpenFestive,
+  onOpenNotifications,
+  onOpenSupport,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Sample seed group buys for discovery preview
@@ -109,6 +117,30 @@ export const HomeScreen: React.FC<{
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {/* Quick Utility Bar: Notifications & Support */}
+        <View style={styles.topUtilityBar}>
+          <TouchableOpacity
+            style={styles.utilityBtn}
+            onPress={onOpenNotifications}
+            activeOpacity={0.8}
+          >
+            <Typography variant="bodySm">🔔 Notifications</Typography>
+            <View style={styles.utilityBadge}>
+              <Typography variant="caption" color={theme.colors.neutral[0]} weight="bold" style={{ fontSize: 10 }}>
+                2
+              </Typography>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.utilityBtn}
+            onPress={onOpenSupport}
+            activeOpacity={0.8}
+          >
+            <Typography variant="bodySm">🎧 Help & Support</Typography>
+          </TouchableOpacity>
+        </View>
+
         {/* Value Proposition Hero Banner */}
         <Card style={styles.heroCard}>
           <Typography variant="caption" color={theme.colors.secondary[700]} weight="bold">
@@ -259,6 +291,29 @@ const styles = StyleSheet.create({
   content: {
     padding: theme.spacing[4],
     paddingBottom: theme.spacing[12],
+  },
+  topUtilityBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: theme.spacing[2],
+    marginBottom: theme.spacing[3],
+  },
+  utilityBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: theme.spacing[3],
+    paddingVertical: theme.spacing[2],
+    backgroundColor: theme.colors.surface.card,
+    borderRadius: theme.borderRadius.full,
+    borderWidth: 1,
+    borderColor: theme.borderSubtle,
+  },
+  utilityBadge: {
+    backgroundColor: theme.colors.error.main,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: theme.borderRadius.full,
   },
   heroCard: {
     backgroundColor: theme.colors.primary[50],
