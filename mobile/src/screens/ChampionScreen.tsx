@@ -126,7 +126,7 @@ export const ChampionScreen: React.FC<ChampionScreenProps> = ({
               currentStatus === ChampionStatus.ACTIVE
                 ? 'success'
                 : currentStatus === ChampionStatus.SUSPENDED
-                ? 'danger'
+                ? 'error'
                 : 'warning'
             }
           />
@@ -244,12 +244,12 @@ export const ChampionScreen: React.FC<ChampionScreenProps> = ({
                 </Typography>
                 <Badge
                   status={canCreate ? 'Capacity Available' : 'Limit Reached'}
-                  variant={canCreate ? 'success' : 'danger'}
+                  variant={canCreate ? 'success' : 'error'}
                 />
               </View>
 
               <View style={styles.capacityRow}>
-                <Typography variant="h1" color={canCreate ? theme.brandGreen : theme.danger}>
+                <Typography variant="h1" color={canCreate ? theme.brandGreen : theme.colors.error[500]}>
                   {activeGroupBuysCount} / {maxActive}
                 </Typography>
                 <View style={{ flex: 1 }}>
@@ -330,7 +330,8 @@ export const ChampionScreen: React.FC<ChampionScreenProps> = ({
 
                 <View style={{ marginVertical: 8 }}>
                   <ProgressBar
-                    progress={Math.round((sampleGroupBuy.paidQuantity / sampleGroupBuy.targetQuantity) * 100)}
+                    paidQuantity={sampleGroupBuy.paidQuantity}
+                    targetQuantity={sampleGroupBuy.targetQuantity}
                   />
                 </View>
 
@@ -354,7 +355,7 @@ export const ChampionScreen: React.FC<ChampionScreenProps> = ({
                     onPress={() => setBroadcastDialect('standard')}
                     style={[styles.dialectBtn, broadcastDialect === 'standard' && styles.dialectBtnActive]}
                   >
-                    <Typography variant="caption" weight={broadcastDialect === 'standard' ? 'bold' : 'normal'}>
+                    <Typography variant="caption" weight={broadcastDialect === 'standard' ? 'bold' : 'regular'}>
                       English
                     </Typography>
                   </TouchableOpacity>
@@ -362,7 +363,7 @@ export const ChampionScreen: React.FC<ChampionScreenProps> = ({
                     onPress={() => setBroadcastDialect('pidgin')}
                     style={[styles.dialectBtn, broadcastDialect === 'pidgin' && styles.dialectBtnActive]}
                   >
-                    <Typography variant="caption" weight={broadcastDialect === 'pidgin' ? 'bold' : 'normal'}>
+                    <Typography variant="caption" weight={broadcastDialect === 'pidgin' ? 'bold' : 'regular'}>
                       Pidgin
                     </Typography>
                   </TouchableOpacity>
