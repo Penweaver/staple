@@ -15,6 +15,8 @@ import {
   ChampionCreateScreen,
   WalletScreen,
   OrdersScreen,
+  CheckoutScreen,
+  OrderConfirmationScreen,
   LocationSelectScreen,
   ProductListScreen,
   ProductDetailScreen,
@@ -33,8 +35,69 @@ export default function App() {
   const [showLocationSelect, setShowLocationSelect] = useState<boolean>(false);
   const [showChampionWizard, setShowChampionWizard] = useState<boolean>(false);
 
+  // Checkout flow state
+  const [checkoutData, setCheckoutData] = useState<{
+    itemTitle: string;
+    unit: string;
+    unitPrice: number;
+    quantity: number;
+    collectionHub: string;
+  } | null>(null);
+
+  const [confirmedOrder, setConfirmedOrder] = useState<{
+    orderNumber: string;
+    pickupCode: string;
+    totalAmount: number;
+    walletUsed: number;
+    gatewayPaid: number;
+    collectionHub: string;
+  } | null>(null);
+
   const renderContent = () => {
-    // 1. Champion 6-Step Creation Wizard
+    // 1. Order Confirmation Screen
+    if (confirmedOrder) {
+      return (
+        <OrderConfirmationScreen
+          orderNumber={confirmedOrder.orderNumber}
+          pickupCode={confirmedOrder.pickupCode}
+          totalAmount={confirmedOrder.totalAmount}
+          walletUsed={confirmedOrder.walletUsed}
+          gatewayPaid={confirmedOrder.gatewayPaid}
+          collectionHub={confirmedOrder.collectionHub}
+          onViewOrders={() => {
+            setConfirmedOrder(null);
+            setActiveGroupBuyId(null);
+            setActiveTab('orders');
+          }}
+          onShare={() => {
+            alert('Opening WhatsApp to invite neighbors!');
+          }}
+        />
+      );
+    }
+
+    // 2. Checkout Screen
+    if (checkoutData) {
+      return (
+        <CheckoutScreen
+          itemTitle={checkoutData.itemTitle}
+          unit={checkoutData.unit}
+          unitPrice={checkoutData.unitPrice}
+          quantity={checkoutData.quantity}
+          collectionHub={checkoutData.collectionHub}
+          onBack={() => setCheckoutData(null)}
+          onPaymentSuccess={(res) => {
+            setConfirmedOrder({
+              ...res,
+              collectionHub: checkoutData.collectionHub,
+            });
+            setCheckoutData(null);
+          }}
+        />
+      );
+    }
+
+    // 3. Champion 6-Step Creation Wizard
     if (showChampionWizard) {
       return (
         <ChampionCreateScreen
@@ -47,7 +110,7 @@ export default function App() {
       );
     }
 
-    // 2. Location Selection Modal/Screen
+    // 4. Location Selection Modal/Screen
     if (showLocationSelect) {
       return (
         <LocationSelectScreen
@@ -57,7 +120,7 @@ export default function App() {
       );
     }
 
-    // 3. Product Detail Screen
+    // 5. Product Detail Screen
     if (activeProductId) {
       return (
         <ProductDetailScreen
@@ -75,7 +138,7 @@ export default function App() {
       );
     }
 
-    // 4. Basket Detail Screen
+    // 6. Basket Detail Screen
     if (activeBasketId) {
       return (
         <BasketDetailScreen
@@ -89,7 +152,7 @@ export default function App() {
       );
     }
 
-    // 5. Basket List Screen
+    // 7. Basket List Screen
     if (showBasketsList) {
       return (
         <BasketListScreen
@@ -99,20 +162,26 @@ export default function App() {
       );
     }
 
-    // 6. Group Buy Detail Screen
+    // 8. Group Buy Detail Screen
     if (activeGroupBuyId) {
       return (
         <GroupBuyDetailScreen
           groupBuyId={activeGroupBuyId}
           onBack={() => setActiveGroupBuyId(null)}
           onProceedToCheckout={(quantity) => {
-            alert(`Proceeding to Paystack checkout for ${quantity} unit(s)`);
+            setCheckoutData({
+              itemTitle: 'Mama Gold Premium Parboiled Rice (50kg)',
+              unit: 'bag',
+              unitPrice: 82875,
+              quantity,
+              collectionHub: 'staple Hub — Lekki Admiralty (42 Admiralty Way)',
+            });
           }}
         />
       );
     }
 
-    // 7. Main Tabs
+    // 9. Main Tabs
     switch (activeTab) {
       case 'discover':
         return (
@@ -150,7 +219,9 @@ export default function App() {
     !!activeBasketId ||
     showBasketsList ||
     showLocationSelect ||
-    showChampionWizard;
+    showChampionWizard ||
+    !!checkoutData ||
+    !!confirmedOrder;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -159,7 +230,7 @@ export default function App() {
       {/* Main View Area */}
       <View style={styles.main}>{renderContent()}</View>
 
-      {/* Bottom Navigation Bar (Hidden when inside a detail/wizard screen) */}
+      {/* Bottom Navigation Bar (Hidden when inside a detail/wizard/checkout screen) */}
       {!isSubScreen && (
         <View style={styles.tabBar}>
           <TouchableOpacity

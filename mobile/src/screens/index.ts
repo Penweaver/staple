@@ -4,6 +4,8 @@ export * from './ChampionScreen.js';
 export * from './ChampionCreateScreen.js';
 export * from './WalletScreen.js';
 export * from './OrdersScreen.js';
+export * from './CheckoutScreen.js';
+export * from './OrderConfirmationScreen.js';
 export * from './LocationSelectScreen.js';
 export * from './ProductListScreen.js';
 export * from './ProductDetailScreen.js';
