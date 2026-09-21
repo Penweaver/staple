@@ -7,6 +7,8 @@ import type {
   GroupBuyStatus,
   GroupBuyType,
   GroupBuyCreatorType,
+  ChampionStatus,
+  ChampionApplicationStatus,
 } from './enums.js';
 
 import type {
@@ -25,6 +27,8 @@ import type {
   GroupBuy,
   GroupBuyPricingTier,
   GroupBuyParticipant,
+  ChampionApplication,
+  ChampionMetrics,
 } from './entities.js';
 
 // ──────────────────────────────────────────────
@@ -386,6 +390,77 @@ export interface CreateCollectionPointRequest {
   contact_name?: string;
   operating_hours?: Record<string, { open: string; close: string }>;
   is_active?: boolean;
+}
+
+// ──────────────────────────────────────────────
+// Champion API Types (Phase 5)
+// ──────────────────────────────────────────────
+
+export interface ChampionApplicationInput {
+  full_name: string;
+  phone: string;
+  state: string;
+  lga: string;
+  neighborhood: string;
+  service_area_id?: string;
+  estimated_network_size: number;
+  motivation: string;
+  experience?: string;
+}
+
+export interface ChampionApplicationResponse {
+  application: ChampionApplication;
+  message: string;
+}
+
+export interface ChampionMeResponse {
+  profile: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    phone: string | null;
+    championStatus: ChampionStatus;
+    championApprovedAt: string | null;
+    championSuspensionReason?: string | null;
+  };
+  metrics: ChampionMetrics;
+  pendingApplication: ChampionApplication | null;
+  recentGroupBuys: Array<{
+    id: string;
+    slug: string;
+    title: string;
+    status: GroupBuyStatus;
+    targetQuantity: number;
+    paidQuantity: number;
+    progressPercentage: number;
+    mvfqMet: boolean;
+    expiresAt: string | null;
+  }>;
+}
+
+export interface ChampionAdminReviewInput {
+  action: 'approve' | 'reject';
+  rejectionReason?: string;
+}
+
+export interface ChampionAdminReviewResponse {
+  application: ChampionApplication;
+  championStatus: ChampionStatus;
+  message: string;
+}
+
+export interface ChampionSuspendInput {
+  reason: string;
+}
+
+export interface ChampionMilestoneRecord {
+  id: string;
+  groupBuyId: string;
+  groupBuyTitle: string;
+  groupBuySlug: string;
+  amountNaira: number;
+  creditedAt: string;
+  status: 'credited';
 }
 
 // ──────────────────────────────────────────────
