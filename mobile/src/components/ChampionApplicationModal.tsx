@@ -147,7 +147,7 @@ export const ChampionApplicationModal: React.FC<ChampionApplicationModalProps> =
                 <Typography
                   variant="caption"
                   color={selectedState === st ? theme.colors.primary[800] : theme.textPrimary}
-                  weight={selectedState === st ? 'bold' : 'normal'}
+                  weight={selectedState === st ? 'bold' : 'regular'}
                 >
                   {st}
                 </Typography>
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FCA5A5',
     padding: theme.spacing[3],
-    borderRadius: theme.radius.md,
+    borderRadius: theme.borderRadius.md,
     marginBottom: theme.spacing[4],
   },
   fieldLabel: {
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   statePill: {
     paddingHorizontal: theme.spacing[3],
     paddingVertical: theme.spacing[2],
-    borderRadius: theme.radius.full,
+    borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.neutral[100],
     borderWidth: 1,
     borderColor: theme.colors.neutral[300],
