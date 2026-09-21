@@ -154,6 +154,25 @@ export default function AdminFinancePage() {
     result: null,
   });
 
+  // ── Mutable wallet & transaction state (so manual credits reflect immediately) ──
+  const [wallets, setWallets] = useState<WalletRow[]>(mockWallets);
+  const [transactions, setTransactions] = useState<TransactionRow[]>(mockTransactions);
+
+  // ── Manual Wallet Credit Modal ──
+  const [creditModal, setCreditModal] = useState<{
+    isOpen: boolean;
+    selectedWalletId: string;
+    amount: string;
+    reference: string;
+    isProcessing: boolean;
+  }>({
+    isOpen: false,
+    selectedWalletId: '',
+    amount: '',
+    reference: '',
+    isProcessing: false,
+  });
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -173,10 +192,10 @@ export default function AdminFinancePage() {
         isOpen: true,
         isRunning: false,
         result: {
-          totalWallets: mockWallets.length,
-          balancedWallets: mockWallets.length,
+          totalWallets: wallets.length,
+          balancedWallets: wallets.length,
           discrepantWallets: 0,
-          totalSystemLiability: mockWallets.reduce((acc, w) => acc + w.currentBalance, 0),
+          totalSystemLiability: wallets.reduce((acc, w) => acc + w.currentBalance, 0),
           isClean: true,
           timestamp: new Date().toISOString(),
         },
@@ -192,7 +211,71 @@ export default function AdminFinancePage() {
     showToast('Evaluating 48-hour hold window... 4 orders matured and ₦14,000 credited to buyer wallets.');
   };
 
-  const filteredWallets = mockWallets.filter((w) => {
+  // ── Manual Credit Handler ──
+  const handleManualCredit = () => {
+    const amt = parseFloat(creditModal.amount);
+    if (isNaN(amt) || amt <= 0) {
+      showToast('⚠️ Please enter a valid amount greater than 0.');
+      return;
+    }
+    if (!creditModal.selectedWalletId) {
+      showToast('⚠️ Please select a customer wallet.');
+      return;
+    }
+
+    setCreditModal((prev) => ({ ...prev, isProcessing: true }));
+
+    // Simulate a brief delay as if calling the backend
+    setTimeout(() => {
+      const walletId = creditModal.selectedWalletId;
+      const ref = creditModal.reference || 'Manual Deposit — Admin Verified';
+
+      // Update wallet balance
+      setWallets((prev) =>
+        prev.map((w) =>
+          w.id === walletId
+            ? {
+                ...w,
+                currentBalance: w.currentBalance + amt,
+                ledgerBalance: w.ledgerBalance + amt,
+                lastActivityAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+              }
+            : w,
+        ),
+      );
+
+      // Find the wallet for the transaction entry
+      const targetWallet = wallets.find((w) => w.id === walletId);
+      const newBalance = (targetWallet?.currentBalance || 0) + amt;
+
+      // Add a new transaction entry
+      const newTx: TransactionRow = {
+        id: `tx-${Date.now()}`,
+        walletId,
+        userName: targetWallet?.customerName || 'Unknown',
+        entrySide: 'credit',
+        transactionType: 'credit_manual_deposit',
+        amount: amt,
+        balanceAfter: newBalance,
+        description: ref,
+        createdAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      };
+      setTransactions((prev) => [newTx, ...prev]);
+
+      // Close modal and show toast
+      setCreditModal({
+        isOpen: false,
+        selectedWalletId: '',
+        amount: '',
+        reference: '',
+        isProcessing: false,
+      });
+
+      showToast(`✅ ${formatNaira(amt)} credited to ${targetWallet?.customerName}'s wallet. Ref: ${ref}`);
+    }, 800);
+  };
+
+  const filteredWallets = wallets.filter((w) => {
     const matchesSearch =
       w.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       w.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -204,7 +287,7 @@ export default function AdminFinancePage() {
     return true;
   });
 
-  const totalLiability = mockWallets.reduce((acc, w) => acc + w.currentBalance, 0);
+  const totalLiability = wallets.reduce((acc, w) => acc + w.currentBalance, 0);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F9FAFB' }}>
@@ -248,6 +331,12 @@ export default function AdminFinancePage() {
             >
               💰 Disburse Tier Rebates (48h)
             </button>
+            <button
+              onClick={() => setCreditModal({ isOpen: true, selectedWalletId: '', amount: '', reference: '', isProcessing: false })}
+              style={{ ...styles.primaryButton, backgroundColor: '#7C3AED' }}
+            >
+              🏦 Manual Wallet Credit
+            </button>
           </div>
         </header>
 
@@ -261,7 +350,7 @@ export default function AdminFinancePage() {
 
           <div style={styles.metricCard}>
             <div style={styles.metricLabel}>Active Wallets Monitored</div>
-            <div style={styles.metricValue}>{mockWallets.length}</div>
+            <div style={styles.metricValue}>{wallets.length}</div>
             <div style={{ ...styles.metricSubtitle, color: '#0E9F6E' }}>100% Active with KYC</div>
           </div>
 
@@ -289,7 +378,7 @@ export default function AdminFinancePage() {
               fontWeight: activeTab === 'wallets' ? 600 : 500,
             }}
           >
-            Customer Wallets & Balances ({mockWallets.length})
+            Customer Wallets & Balances ({wallets.length})
           </button>
           <button
             onClick={() => setActiveTab('transactions')}
@@ -300,7 +389,7 @@ export default function AdminFinancePage() {
               fontWeight: activeTab === 'transactions' ? 600 : 500,
             }}
           >
-            Double-Entry Transaction Ledger ({mockTransactions.length})
+            Double-Entry Transaction Ledger ({transactions.length})
           </button>
           <button
             onClick={() => setActiveTab('cron')}
@@ -336,7 +425,7 @@ export default function AdminFinancePage() {
                     color: walletFilter === 'all' ? '#FFFFFF' : '#374151',
                   }}
                 >
-                  All ({mockWallets.length})
+                  All ({wallets.length})
                 </button>
                 <button
                   onClick={() => setWalletFilter('balanced')}
@@ -371,6 +460,7 @@ export default function AdminFinancePage() {
                   <th style={styles.th}>Discrepancy</th>
                   <th style={styles.th}>Integrity Status</th>
                   <th style={styles.th}>Last Activity</th>
+                  <th style={styles.th}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -396,6 +486,29 @@ export default function AdminFinancePage() {
                     <td style={{ ...styles.td, fontSize: '13px', color: '#6B7280' }}>
                       {w.lastActivityAt}
                     </td>
+                    <td style={styles.td}>
+                      <button
+                        onClick={() => setCreditModal({
+                          isOpen: true,
+                          selectedWalletId: w.id,
+                          amount: '',
+                          reference: '',
+                          isProcessing: false,
+                        })}
+                        style={{
+                          backgroundColor: '#7C3AED',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          padding: '5px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        + Credit
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -420,7 +533,7 @@ export default function AdminFinancePage() {
                 </tr>
               </thead>
               <tbody>
-                {mockTransactions.map((tx) => (
+                {transactions.map((tx) => (
                   <tr key={tx.id} style={styles.tr}>
                     <td style={styles.tdCode}>{tx.id}</td>
                     <td style={{ ...styles.td, fontSize: '13px', color: '#6B7280' }}>{tx.createdAt}</td>
@@ -559,6 +672,127 @@ export default function AdminFinancePage() {
                   </div>
                 </div>
               ) : null}
+            </div>
+          </div>
+        )}
+
+        {/* ── Manual Wallet Credit Modal ── */}
+        {creditModal.isOpen && (
+          <div style={styles.modalOverlay}>
+            <div style={{ ...styles.modalBox, width: '480px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', margin: '0 0 6px 0' }}>
+                🏦 Manual Wallet Credit
+              </h2>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px 0' }}>
+                Credit a customer&apos;s wallet after verifying their bank transfer proof of payment.
+              </p>
+
+              {/* Customer Select */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Select Customer Wallet
+                </label>
+                <select
+                  value={creditModal.selectedWalletId}
+                  onChange={(e) => setCreditModal((prev) => ({ ...prev, selectedWalletId: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    backgroundColor: '#FFFFFF',
+                  }}
+                >
+                  <option value="">— Choose a customer —</option>
+                  {wallets.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.customerName} ({w.customerEmail}) — Balance: {formatNaira(w.currentBalance)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Amount Input */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Credit Amount (₦)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder="e.g. 50000"
+                  value={creditModal.amount}
+                  onChange={(e) => setCreditModal((prev) => ({ ...prev, amount: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                  }}
+                />
+              </div>
+
+              {/* Reference / Note */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Transaction Reference / Note
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Bank transfer verified - Receipt #12345"
+                  value={creditModal.reference}
+                  onChange={(e) => setCreditModal((prev) => ({ ...prev, reference: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                  }}
+                />
+              </div>
+
+              {/* Preview */}
+              {creditModal.selectedWalletId && creditModal.amount && (
+                <div style={{ ...styles.alertBox, backgroundColor: '#EBF5FF', borderColor: '#3B82F6', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '13px', color: '#1E40AF' }}>
+                    <strong>Preview:</strong> Credit <strong>{formatNaira(parseFloat(creditModal.amount) || 0)}</strong> to{' '}
+                    <strong>{wallets.find((w) => w.id === creditModal.selectedWalletId)?.customerName}</strong>&apos;s wallet.
+                    New balance will be{' '}
+                    <strong>
+                      {formatNaira(
+                        (wallets.find((w) => w.id === creditModal.selectedWalletId)?.currentBalance || 0) +
+                          (parseFloat(creditModal.amount) || 0),
+                      )}
+                    </strong>.
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button
+                  onClick={() => setCreditModal({ isOpen: false, selectedWalletId: '', amount: '', reference: '', isProcessing: false })}
+                  style={styles.secondaryButton}
+                  disabled={creditModal.isProcessing}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleManualCredit}
+                  disabled={creditModal.isProcessing || !creditModal.selectedWalletId || !creditModal.amount}
+                  style={{
+                    ...styles.primaryButton,
+                    backgroundColor: creditModal.isProcessing ? '#9CA3AF' : '#7C3AED',
+                    cursor: creditModal.isProcessing ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {creditModal.isProcessing ? '⏳ Processing...' : '✅ Confirm Credit'}
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -216,7 +216,7 @@ export default function App() {
       case 'orders':
         return <OrdersScreen />;
       case 'wallet':
-        return <WalletScreen />;
+        return <WalletScreen onSendProofToAdmin={() => setShowSupportChat(true)} />;
       case 'champion':
         return (
           <ChampionScreen
@@ -235,6 +235,7 @@ export default function App() {
     showBasketsList ||
     showLocationSelect ||
     showChampionWizard ||
+    showSupportChat ||
     !!checkoutData ||
     !!confirmedOrder;
 
