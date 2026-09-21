@@ -37,7 +37,8 @@ export interface GroupBuyItem {
 export const HomeScreen: React.FC<{
   onSelectGroupBuy?: (id: string) => void;
   onOpenChampion?: () => void;
-}> = ({ onSelectGroupBuy, onOpenChampion }) => {
+  onOpenFestive?: () => void;
+}> = ({ onSelectGroupBuy, onOpenChampion, onOpenFestive }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Sample seed group buys for discovery preview
@@ -120,6 +121,26 @@ export const HomeScreen: React.FC<{
             Join neighbors in Lekki Phase 1 to pool orders on everyday essentials.
           </Typography>
         </Card>
+
+        {/* Festive & Owambe Planning Quick Banner */}
+        <TouchableOpacity activeOpacity={0.85} onPress={onOpenFestive} style={styles.festiveBannerContainer}>
+          <Card style={styles.festiveBannerCard}>
+            <View style={styles.festiveBannerRow}>
+              <View style={{ flex: 1 }}>
+                <Typography variant="caption" color={theme.brandGreen} weight="bold">
+                  👑 OWAMBE & FESTIVE SAVINGS
+                </Typography>
+                <Typography variant="h3" style={{ color: theme.colors.primary[900], marginVertical: 2 }}>
+                  Plan Parties 42–100 Days Ahead
+                </Typography>
+                <Typography variant="caption" color={theme.textSecondary}>
+                  Lock wholesale rice & oil prices with flexible instalments.
+                </Typography>
+              </View>
+              <Typography variant="h1">🎉</Typography>
+            </View>
+          </Card>
+        </TouchableOpacity>
 
         {/* Category Pills */}
         <ScrollView
@@ -247,6 +268,19 @@ const styles = StyleSheet.create({
   heroTitle: {
     color: theme.colors.primary[900],
     marginVertical: theme.spacing[1],
+  },
+  festiveBannerContainer: {
+    marginBottom: theme.spacing[4],
+  },
+  festiveBannerCard: {
+    backgroundColor: '#FEF3C7',
+    borderColor: '#FDE68A',
+  },
+  festiveBannerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: theme.spacing[3],
   },
   categoriesContainer: {
     flexDirection: 'row',
