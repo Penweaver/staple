@@ -249,7 +249,7 @@ export const ChampionScreen: React.FC<ChampionScreenProps> = ({
               </View>
 
               <View style={styles.capacityRow}>
-                <Typography variant="h1" color={canCreate ? theme.brandGreen : theme.colors.error[500]}>
+                <Typography variant="h1" color={canCreate ? theme.brandGreen : theme.colors.error.main}>
                   {activeGroupBuysCount} / {maxActive}
                 </Typography>
                 <View style={{ flex: 1 }}>

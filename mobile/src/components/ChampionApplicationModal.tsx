@@ -103,11 +103,11 @@ export const ChampionApplicationModal: React.FC<ChampionApplicationModalProps> =
 
           {errors.length > 0 && (
             <View style={styles.errorBox}>
-              <Typography variant="bodySm" color={theme.colors.error[500]} weight="bold">
+              <Typography variant="bodySm" color={theme.colors.error.main} weight="bold">
                 Please fix the following:
               </Typography>
               {errors.map((err, i) => (
-                <Typography key={i} variant="caption" color={theme.colors.error[500]}>
+                <Typography key={i} variant="caption" color={theme.colors.error.main}>
                   • {err}
                 </Typography>
               ))}
