@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { theme } from '../theme/tokens.js';
 import { GroupBuyStatus, OrderStatus } from '@staple/shared';
 
@@ -10,8 +10,7 @@ export interface BadgeProps {
 }
 
 export const Badge: React.FC<BadgeProps> = ({ label, status, variant }) => {
-  // Infer variant and label from canonical status if not provided directly
-  let computedVariant = variant || 'neutral';
+  let computedVariant: 'success' | 'warning' | 'error' | 'info' | 'neutral' = variant || 'neutral';
   let computedLabel = label || status || '';
 
   if (status) {
@@ -55,12 +54,25 @@ export const Badge: React.FC<BadgeProps> = ({ label, status, variant }) => {
     }
   }
 
-  const bgStyle = styles[`${computedVariant}Bg` as keyof typeof styles];
-  const textStyle = styles[`${computedVariant}Text` as keyof typeof styles];
+  const bgStyles: Record<'success' | 'warning' | 'error' | 'info' | 'neutral', ViewStyle> = {
+    success: styles.successBg,
+    warning: styles.warningBg,
+    error: styles.errorBg,
+    info: styles.infoBg,
+    neutral: styles.neutralBg,
+  };
+
+  const textStyles: Record<'success' | 'warning' | 'error' | 'info' | 'neutral', TextStyle> = {
+    success: styles.successText,
+    warning: styles.warningText,
+    error: styles.errorText,
+    info: styles.infoText,
+    neutral: styles.neutralText,
+  };
 
   return (
-    <View style={[styles.badge, bgStyle]}>
-      <Text style={[styles.label, textStyle]}>{computedLabel}</Text>
+    <View style={[styles.badge, bgStyles[computedVariant]]}>
+      <Text style={[styles.label, textStyles[computedVariant]]}>{computedLabel}</Text>
     </View>
   );
 };

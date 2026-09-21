@@ -6,30 +6,47 @@ export interface HeaderProps {
   locationName?: string;
   onLocationPress?: () => void;
   title?: string;
+  showBack?: boolean;
+  onBack?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  locationName = 'Lekki Phase 1, Lagos',
+  locationName,
   onLocationPress,
   title = 'staple',
+  showBack = false,
+  onBack,
 }) => {
   return (
     <View style={styles.header}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.brandTitle}>{title}</Text>
+      <View style={styles.leftContainer}>
+        {showBack && onBack && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={onBack}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Text style={styles.backArrow}>←</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.brandTitle} numberOfLines={1}>
+          {title}
+        </Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.locationBadge}
-        onPress={onLocationPress}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.locationIcon}>📍</Text>
-        <Text style={styles.locationText} numberOfLines={1}>
-          {locationName}
-        </Text>
-        <Text style={styles.chevron}>▾</Text>
-      </TouchableOpacity>
+      {locationName && (
+        <TouchableOpacity
+          style={styles.locationBadge}
+          onPress={onLocationPress}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.locationIcon}>📍</Text>
+          <Text style={styles.locationText} numberOfLines={1}>
+            {locationName}
+          </Text>
+          <Text style={styles.chevron}>▾</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -45,12 +62,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.borderSubtle,
   },
-  titleContainer: {
+  leftContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+  },
+  backButton: {
+    marginRight: 10,
+    padding: 4,
+  },
+  backArrow: {
+    fontSize: 22,
+    color: theme.textPrimary,
+    fontWeight: 'bold',
   },
   brandTitle: {
-    fontSize: theme.typography.fontSize['2xl'],
+    fontSize: theme.typography.fontSize.xl,
     fontWeight: theme.typography.fontWeight.heavy,
     color: theme.brandGreen,
     letterSpacing: -0.5,
@@ -62,7 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing[3],
     paddingVertical: theme.spacing[1],
     borderRadius: theme.borderRadius.full,
-    maxWidth: 200,
+    maxWidth: 180,
   },
   locationIcon: {
     fontSize: theme.typography.fontSize.xs,

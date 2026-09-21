@@ -7,6 +7,7 @@ import {
   TouchableOpacityProps,
   ViewStyle,
   TextStyle,
+  StyleProp,
 } from 'react-native';
 import { theme } from '../theme/tokens.js';
 
@@ -30,7 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const isDisabled = disabled || loading;
 
-  const buttonStyles: ViewStyle[] = [
+  const buttonStyles: StyleProp<ViewStyle> = [
     styles.base,
     styles[size],
     styles[variant],
@@ -39,7 +40,7 @@ export const Button: React.FC<ButtonProps> = ({
     style as ViewStyle,
   ];
 
-  const textStyles: TextStyle[] = [
+  const textStyles: StyleProp<TextStyle> = [
     styles.textBase,
     styles[`${size}Text` as keyof typeof styles] as TextStyle,
     styles[`${variant}Text` as keyof typeof styles] as TextStyle,
