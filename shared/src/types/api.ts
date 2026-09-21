@@ -464,6 +464,67 @@ export interface ChampionMilestoneRecord {
 }
 
 // ──────────────────────────────────────────────
+// Fulfilment API Types (Phase 6)
+// ──────────────────────────────────────────────
+
+export interface VerifyPickupCodeRequest {
+  pickupCode: string; // e.g. "STP-782-910" or "782910"
+}
+
+export interface VerifyPickupCodeResponse {
+  fulfilmentId: string;
+  orderId: string;
+  orderNumber: string;
+  pickupCode: string;
+  status: string;
+  customerName: string;
+  customerPhone: string;
+  productName: string;
+  quantity: number;
+  totalAmountNaira: number;
+  hubName: string;
+  hubAddress: string;
+  isReadyForPickup: boolean;
+  alreadyCollected: boolean;
+  collectedAt: string | null;
+  collectedBy: string | null;
+}
+
+export interface CompleteHandoffRequest {
+  fulfilmentId: string;
+  collectedBy?: string; // Optional proxy collector name
+  notes?: string;
+}
+
+export interface CompleteHandoffResponse {
+  fulfilmentId: string;
+  orderId: string;
+  status: 'collected';
+  collectedAt: string;
+  collectedBy: string;
+  groupBuyCompleted: boolean;
+  message: string;
+}
+
+export interface ReassignHubRequest {
+  fulfilmentId: string;
+  newCollectionPointId: string;
+  reason?: string;
+}
+
+export interface DispatchGroupBuyRequest {
+  groupBuyId: string;
+}
+
+export interface DispatchGroupBuyResponse {
+  groupBuyId: string;
+  stagedOrdersCount: number;
+  assignedHubsCount: number;
+  status: 'delivery_fulfilment';
+  message: string;
+}
+
+// ──────────────────────────────────────────────
 // Common API Types
 // ──────────────────────────────────────────────
 

@@ -485,6 +485,19 @@ export interface Fulfilment {
   updated_at: string;
 }
 
+export interface HubStagingLoad {
+  collectionPointId: string;
+  hubName: string;
+  address: string;
+  contactPhone: string | null;
+  contactName: string | null;
+  operatingHours: Record<string, { open: string; close: string }> | null;
+  readyUnitsCount: number;
+  collectedUnitsCount: number;
+  pendingUnitsCount: number;
+  totalOrdersCount: number;
+}
+
 // --- System Configuration & Audit ---
 export interface SystemConfig {
   key: string;
