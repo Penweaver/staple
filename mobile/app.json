@@ -20,6 +20,12 @@
       ]
     },
     "web": {},
-    "scheme": "staple"
+    "scheme": "staple",
+    "extra": {
+      "eas": {
+        "projectId": "06f74847-dabb-4751-804f-592c94dd2d72"
+      }
+    },
+    "owner": "penweaver"
   }
 }
