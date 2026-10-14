@@ -33,6 +33,10 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     const sub = moduleName === 'react-dom' ? 'index.js' : moduleName.slice('react-dom/'.length);
     return context.resolveRequest(context, path.resolve(projectRoot, 'node_modules/react-dom', sub), platform);
   }
+  if (moduleName === 'react-native' || moduleName.startsWith('react-native/')) {
+    const sub = moduleName === 'react-native' ? 'index.js' : moduleName.slice('react-native/'.length);
+    return context.resolveRequest(context, path.resolve(projectRoot, 'node_modules/react-native', sub), platform);
+  }
 
   if (moduleName.startsWith('.') && moduleName.endsWith('.js')) {
     const nameWithoutJs = moduleName.slice(0, -3);

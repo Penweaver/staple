@@ -17,6 +17,10 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
+  "overrides": {
+    "react-native": "0.74.1",
+    "react": "18.2.0"
+  },
   "keywords": [
     "staple",
     "group-buy",
