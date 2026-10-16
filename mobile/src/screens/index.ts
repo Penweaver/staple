@@ -16,3 +16,5 @@ export * from './InstalmentPaymentModal';
 export * from './ChatScreen';
 export * from './NotificationsScreen';
 export * from './SupportScreen';
+export * from './AuthScreen';
+export * from './AccountScreen';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { theme } from '../theme/tokens';
 
 export interface HeaderProps {
@@ -29,9 +29,17 @@ export const Header: React.FC<HeaderProps> = ({
             <Text style={styles.backArrow}>←</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.brandTitle} numberOfLines={1}>
-          {title}
-        </Text>
+        {title === 'staple' ? (
+          <Image
+            source={require('../../assets/logo-horizontal.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+        ) : (
+          <Text style={styles.brandTitle} numberOfLines={1}>
+            {title}
+          </Text>
+        )}
       </View>
 
       {locationName && (
@@ -66,6 +74,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+  },
+  logoImage: {
+    width: 120,
+    height: 34,
   },
   backButton: {
     marginRight: 10,

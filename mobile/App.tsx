@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
-  TouchableOpacity,
   Text,
+  Pressable,
   StyleSheet,
   StatusBar,
+  BackHandler,
+  ToastAndroid,
+  Platform,
 } from 'react-native';
 import { theme } from './src/theme/tokens';
 import {
@@ -23,11 +26,27 @@ import {
   BasketListScreen,
   BasketDetailScreen,
   SupportScreen,
+  AuthScreen,
+  AccountScreen,
+  UserSession,
 } from './src/screens/index';
 
-type ActiveTab = 'discover' | 'catalogue' | 'orders' | 'wallet' | 'champion';
+type ActiveTab = 'discover' | 'catalogue' | 'orders' | 'wallet' | 'account';
 
 export default function App() {
+  // Session State
+  const [session, setSession] = useState<UserSession | null>({
+    id: 'usr_amina_01',
+    name: 'Amina Bello',
+    phone: '08034567890',
+    email: 'amina.bello@example.ng',
+    hub: 'Lekki Phase 1 Hub',
+    role: 'member',
+    isKycVerified: true,
+  });
+  const [isGuest, setIsGuest] = useState<boolean>(false);
+
+  // Navigation State
   const [activeTab, setActiveTab] = useState<ActiveTab>('discover');
   const [activeGroupBuyId, setActiveGroupBuyId] = useState<string | null>(null);
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
@@ -36,6 +55,10 @@ export default function App() {
   const [showLocationSelect, setShowLocationSelect] = useState<boolean>(false);
   const [showChampionWizard, setShowChampionWizard] = useState<boolean>(false);
   const [showSupportChat, setShowSupportChat] = useState<boolean>(false);
+  const [showChampionScreen, setShowChampionScreen] = useState<boolean>(false);
+
+  // Hardware Back Button tracker
+  const [lastBackPressed, setLastBackPressed] = useState<number>(0);
 
   // Checkout flow state
   const [checkoutData, setCheckoutData] = useState<{
@@ -54,6 +77,105 @@ export default function App() {
     gatewayPaid: number;
     collectionHub: string;
   } | null>(null);
+
+  // Android Hardware Back Button Handling
+  useEffect(() => {
+    const onBackPress = () => {
+      // 1. Pop sub-screens in reverse stack order
+      if (confirmedOrder) {
+        setConfirmedOrder(null);
+        return true;
+      }
+      if (showSupportChat) {
+        setShowSupportChat(false);
+        return true;
+      }
+      if (checkoutData) {
+        setCheckoutData(null);
+        return true;
+      }
+      if (showChampionWizard) {
+        setShowChampionWizard(false);
+        return true;
+      }
+      if (showChampionScreen) {
+        setShowChampionScreen(false);
+        return true;
+      }
+      if (showLocationSelect) {
+        setShowLocationSelect(false);
+        return true;
+      }
+      if (activeProductId) {
+        setActiveProductId(null);
+        return true;
+      }
+      if (activeBasketId) {
+        setActiveBasketId(null);
+        return true;
+      }
+      if (showBasketsList) {
+        setShowBasketsList(false);
+        return true;
+      }
+      if (activeGroupBuyId) {
+        setActiveGroupBuyId(null);
+        return true;
+      }
+
+      // 2. If on another tab, return to 'discover' (Home)
+      if (activeTab !== 'discover') {
+        setActiveTab('discover');
+        return true;
+      }
+
+      // 3. Double-back to exit on Home tab
+      const now = Date.now();
+      if (now - lastBackPressed < 2000) {
+        BackHandler.exitApp();
+        return true;
+      }
+      setLastBackPressed(now);
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Press back again to exit STAPLE', ToastAndroid.SHORT);
+      }
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress
+    );
+    return () => subscription.remove();
+  }, [
+    confirmedOrder,
+    showSupportChat,
+    checkoutData,
+    showChampionWizard,
+    showChampionScreen,
+    showLocationSelect,
+    activeProductId,
+    activeBasketId,
+    showBasketsList,
+    activeGroupBuyId,
+    activeTab,
+    lastBackPressed,
+  ]);
+
+  // Auth Gate: Show AuthScreen if not logged in and not guest
+  if (!session && !isGuest) {
+    return (
+      <AuthScreen
+        onLoginSuccess={(newSession) => {
+          setSession(newSession);
+          setIsGuest(false);
+        }}
+        onContinueAsGuest={() => {
+          setIsGuest(true);
+        }}
+      />
+    );
+  }
 
   const renderContent = () => {
     // 1. Order Confirmation Screen
@@ -120,6 +242,17 @@ export default function App() {
           onSuccess={(slug) => {
             setShowChampionWizard(false);
             setActiveGroupBuyId('gb-1');
+          }}
+        />
+      );
+    }
+
+    // 3b. Champion Screen
+    if (showChampionScreen) {
+      return (
+        <ChampionScreen
+          onCreateGroupBuy={() => {
+            setShowChampionWizard(true);
           }}
         />
       );
@@ -202,7 +335,7 @@ export default function App() {
         return (
           <HomeScreen
             onSelectGroupBuy={(id) => setActiveGroupBuyId(id)}
-            onOpenChampion={() => setActiveTab('champion')}
+            onOpenChampion={() => setShowChampionScreen(true)}
           />
         );
       case 'catalogue':
@@ -216,13 +349,23 @@ export default function App() {
       case 'orders':
         return <OrdersScreen />;
       case 'wallet':
-        return <WalletScreen onSendProofToAdmin={() => setShowSupportChat(true)} />;
-      case 'champion':
         return (
-          <ChampionScreen
-            onCreateGroupBuy={() => {
-              setShowChampionWizard(true);
+          <WalletScreen
+            onSendProofToAdmin={() => setShowSupportChat(true)}
+          />
+        );
+      case 'account':
+        return (
+          <AccountScreen
+            session={session}
+            onLogout={() => {
+              setSession(null);
+              setIsGuest(false);
             }}
+            onNavigateToWallet={() => setActiveTab('wallet')}
+            onNavigateToOrders={() => setActiveTab('orders')}
+            onNavigateToSupport={() => setShowSupportChat(true)}
+            onNavigateToChampion={() => setShowChampionScreen(true)}
           />
         );
     }
@@ -235,6 +378,7 @@ export default function App() {
     showBasketsList ||
     showLocationSelect ||
     showChampionWizard ||
+    showChampionScreen ||
     showSupportChat ||
     !!checkoutData ||
     !!confirmedOrder;
@@ -246,16 +390,17 @@ export default function App() {
       {/* Main View Area */}
       <View style={styles.main}>{renderContent()}</View>
 
-      {/* Bottom Navigation Bar (Hidden when inside a detail/wizard/checkout screen) */}
+      {/* Modern Android Bottom Navigation Bar (Hidden when inside a sub-screen) */}
       {!isSubScreen && (
         <View style={styles.tabBar}>
-          <TouchableOpacity
+          <Pressable
             style={styles.tabItem}
             onPress={() => setActiveTab('discover')}
+            android_ripple={{ color: '#E5E7EB', borderless: true }}
           >
-            <Text style={[styles.tabIcon, activeTab === 'discover' && styles.tabActive]}>
-              🛒
-            </Text>
+            <View style={[styles.tabIconWrap, activeTab === 'discover' && styles.tabIconWrapActive]}>
+              <Text style={styles.tabIcon}>🛒</Text>
+            </View>
             <Text
               style={[
                 styles.tabLabel,
@@ -264,15 +409,16 @@ export default function App() {
             >
               Deals
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.tabItem}
             onPress={() => setActiveTab('catalogue')}
+            android_ripple={{ color: '#E5E7EB', borderless: true }}
           >
-            <Text style={[styles.tabIcon, activeTab === 'catalogue' && styles.tabActive]}>
-              🌾
-            </Text>
+            <View style={[styles.tabIconWrap, activeTab === 'catalogue' && styles.tabIconWrapActive]}>
+              <Text style={styles.tabIcon}>🌾</Text>
+            </View>
             <Text
               style={[
                 styles.tabLabel,
@@ -281,15 +427,16 @@ export default function App() {
             >
               Catalogue
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.tabItem}
             onPress={() => setActiveTab('orders')}
+            android_ripple={{ color: '#E5E7EB', borderless: true }}
           >
-            <Text style={[styles.tabIcon, activeTab === 'orders' && styles.tabActive]}>
-              📦
-            </Text>
+            <View style={[styles.tabIconWrap, activeTab === 'orders' && styles.tabIconWrapActive]}>
+              <Text style={styles.tabIcon}>📦</Text>
+            </View>
             <Text
               style={[
                 styles.tabLabel,
@@ -298,15 +445,16 @@ export default function App() {
             >
               Orders
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.tabItem}
             onPress={() => setActiveTab('wallet')}
+            android_ripple={{ color: '#E5E7EB', borderless: true }}
           >
-            <Text style={[styles.tabIcon, activeTab === 'wallet' && styles.tabActive]}>
-              💳
-            </Text>
+            <View style={[styles.tabIconWrap, activeTab === 'wallet' && styles.tabIconWrapActive]}>
+              <Text style={styles.tabIcon}>💳</Text>
+            </View>
             <Text
               style={[
                 styles.tabLabel,
@@ -315,24 +463,25 @@ export default function App() {
             >
               Wallet
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.tabItem}
-            onPress={() => setActiveTab('champion')}
+            onPress={() => setActiveTab('account')}
+            android_ripple={{ color: '#E5E7EB', borderless: true }}
           >
-            <Text style={[styles.tabIcon, activeTab === 'champion' && styles.tabActive]}>
-              ⭐
-            </Text>
+            <View style={[styles.tabIconWrap, activeTab === 'account' && styles.tabIconWrapActive]}>
+              <Text style={styles.tabIcon}>👤</Text>
+            </View>
             <Text
               style={[
                 styles.tabLabel,
-                activeTab === 'champion' && styles.tabLabelActive,
+                activeTab === 'account' && styles.tabLabelActive,
               ]}
             >
-              Champion
+              Account
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       )}
     </SafeAreaView>
@@ -342,40 +491,51 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.bg,
+    backgroundColor: '#F9FAFB',
   },
   main: {
     flex: 1,
   },
   tabBar: {
-    height: theme.components.navigation.tabBarHeight,
-    backgroundColor: theme.colors.surface.card,
+    height: 66,
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: theme.borderSubtle,
-    paddingBottom: 8,
-    paddingTop: 6,
+    borderTopColor: '#E5E7EB',
+    paddingBottom: 6,
+    paddingTop: 4,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabIcon: {
-    fontSize: 20,
+  tabIconWrap: {
+    width: 38,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 2,
-    opacity: 0.6,
   },
-  tabActive: {
-    opacity: 1,
+  tabIconWrapActive: {
+    backgroundColor: '#DCFCE7',
+  },
+  tabIcon: {
+    fontSize: 18,
   },
   tabLabel: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.textSecondary,
-    fontWeight: theme.typography.fontWeight.medium,
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '500',
   },
   tabLabelActive: {
-    color: theme.brandGreen,
-    fontWeight: theme.typography.fontWeight.bold,
+    color: '#16A34A',
+    fontWeight: '700',
   },
 });

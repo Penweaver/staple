@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 const navItems = [
@@ -20,7 +22,11 @@ export const AdminNav: React.FC<{ currentPath?: string }> = ({ currentPath = '/'
   return (
     <aside style={styles.sidebar}>
       <div style={styles.brandContainer}>
-        <span style={styles.brandLogo}>staple</span>
+        <img
+          src="/logo-horizontal.png"
+          alt="staple"
+          style={{ height: '30px', objectFit: 'contain' }}
+        />
         <span style={styles.brandTag}>ADMIN</span>
       </div>
 
@@ -46,7 +52,29 @@ export const AdminNav: React.FC<{ currentPath?: string }> = ({ currentPath = '/'
       </nav>
 
       <div style={styles.footer}>
-        <small style={{ color: '#9CA3AF' }}>STAPLE LIMITED v1.1</small>
+        <div style={styles.userCard}>
+          <div style={styles.userAvatar}>AD</div>
+          <div style={styles.userInfo}>
+            <div style={styles.userName}>Super Admin</div>
+            <div style={styles.userRole}>Operations Lead</div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            if (window.confirm('Are you sure you want to sign out of STAPLE Admin Console?')) {
+              window.location.href = '/login';
+            }
+          }}
+          style={styles.signOutButton}
+        >
+          <span>🚪</span>
+          <span>Sign Out</span>
+        </button>
+
+        <div style={styles.versionRow}>
+          <small style={{ color: '#9CA3AF' }}>STAPLE LIMITED v1.1 • Production</small>
+        </div>
       </div>
     </aside>
   );
@@ -106,6 +134,64 @@ const styles = {
   footer: {
     paddingTop: '16px',
     borderTop: '1px solid #F3F4F6',
-    paddingLeft: '8px',
+    paddingLeft: '4px',
+    paddingRight: '4px',
+  },
+  userCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '8px 10px',
+    backgroundColor: '#F9FAFB',
+    borderRadius: '8px',
+    border: '1px solid #E5E7EB',
+    marginBottom: '10px',
+  },
+  userAvatar: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '16px',
+    backgroundColor: '#16A34A',
+    color: '#FFFFFF',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 700,
+    fontSize: '12px',
+  },
+  userInfo: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+  },
+  userName: {
+    fontSize: '13px',
+    fontWeight: 600,
+    color: '#111827',
+  },
+  userRole: {
+    fontSize: '11px',
+    color: '#6B7280',
+  },
+  signOutButton: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    border: '1px solid #FCA5A5',
+    backgroundColor: '#FEF2F2',
+    color: '#DC2626',
+    fontSize: '13px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginBottom: '12px',
+    transition: 'background-color 0.15s ease',
+  },
+  versionRow: {
+    textAlign: 'center' as const,
+    paddingTop: '4px',
   },
 };
+
