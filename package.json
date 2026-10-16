@@ -10,8 +10,10 @@
     "tests"
   ],
   "scripts": {
-    "postinstall": "npm run build --workspace=@staple/shared",
+    "build": "npm run build --workspace=@staple/shared && npm run build --workspace=@staple/admin",
     "build:shared": "npm run build --workspace=@staple/shared",
+    "build:admin": "npm run build --workspace=@staple/admin",
+    "postinstall": "npm run build --workspace=@staple/shared",
     "test": "npm run test --workspaces --if-present",
     "test:unit": "npm run test --workspace=@staple/tests",
     "lint": "npm run lint --workspaces --if-present",
